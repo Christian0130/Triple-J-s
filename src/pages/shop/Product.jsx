@@ -7,7 +7,9 @@ const Product = (props) => {
   const {id, name, price, image, quantity} = props.data;
   return (
     <div className='product'>
+      <div className="product-image-container">
       <img src={image} alt="" />
+      </div>
       <div className="description">
         <p><b>{name}</b></p>
         <p>${price}</p>

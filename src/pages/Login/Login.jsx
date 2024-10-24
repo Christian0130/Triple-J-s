@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom'; // Import useNavigate
+import './login.css';
 
 const Login = () => {
     const [username, setUsername] = useState('');
@@ -40,35 +41,32 @@ const Login = () => {
 
     return (
         <>
-        <div>
-            <h2>Login</h2>
+        <div className='loginContainer'>
+            <h1>Login to your Account</h1>
             {error && <p style={{ color: 'red' }}>{error}</p>}
             {success && <p style={{ color: 'green' }}>{success}</p>}
             <form onSubmit={handleLogin}>
-                <div>
-                    <label htmlFor="username">Username:</label>
                     <input
+                        placeholder='Username'
                         type="text"
                         id="username"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                         required
                     />
-                </div>
-                <div>
-                    <label htmlFor="password">Password:</label>
                     <input
+                        placeholder='Password'
                         type="password"
                         id="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
                     />
-                </div>
+                
                 <button type="submit">Login</button>
             </form>
+            <Link to={'/register'} className='link'>Register</Link>
         </div>
-        <Link to={'/register'}>Register</Link>
         </>
     );
 };

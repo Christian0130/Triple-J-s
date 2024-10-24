@@ -2,7 +2,7 @@ import './App.css';
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import Navbar from './components/Navbar';
 import Shop from './pages/shop/shop';
-import Cart from './pages/cart/cart';
+import Cart from './pages/cart/Cart';
 import { ShopContextProvider } from './context/shop-context';
 import Login from './pages/Login/Login';
 import Registration from './pages/Register/Registration';
