@@ -10,14 +10,27 @@ const Navbar = () => {
   const { saveCartToDatabase } = useContext(ShopContext);
 
   const handleLogout = async () => {
-    const userId = localStorage.getItem('userId');
+    // const userId = localStorage.getItem('userId');
 
-    // Save the user's cart to the database on logout
-    await saveCartToDatabase(userId);
+    // // Save the user's cart to the database on logout
+    // await saveCartToDatabase(userId);
 
-    // Clear localStorage and redirect to the login page
-    localStorage.removeItem('token');
+    // // Clear localStorage and redirect to the login page
+    // localStorage.removeItem('token');
+    // localStorage.removeItem('userId');
+    const userId = localStorage.getItem('userId'); // Get the user ID
+
+    if (userId) {
+        // Call the API to save the cart items to the database
+        await saveCartToDatabase(userId);
+    }
+
+    // Clear user ID and cart items from local storage and state
     localStorage.removeItem('userId');
+
+    // Optionally redirect the user or show a success message
+    console.log("User logged out successfully");
+    // Redirect or show message
     navigate('/login');
 };
 

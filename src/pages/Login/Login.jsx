@@ -12,7 +12,7 @@ const Login = () => {
     const handleLogin = async (e) => {
         e.preventDefault();
 
-        try {
+        try { 
             const response = await fetch('http://localhost:8081/login', {
                 method: 'POST',
                 headers: {
@@ -37,7 +37,6 @@ const Login = () => {
             setError(err.message); // Set error message
         }
     };
-    
 
     return (
         <>

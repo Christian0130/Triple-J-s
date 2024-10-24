@@ -55,7 +55,6 @@ export const ShopContextProvider = (props) => {
 
     const addToCart = (product) => {
         const userId = localStorage.getItem('userId'); // Get the user ID from localStorage
-    
         if (!userId) {
             console.error('User not logged in');
             return;
@@ -76,74 +75,15 @@ export const ShopContextProvider = (props) => {
             }
         });
     };
-    
-
-    //   const addToCart = (product) => {
-//     setCartItems((prevCart) => {
-//       const existingProduct = prevCart.find((item) => item.productId === product.id);
-
-//       if (existingProduct) {
-//         const updatedCart = prevCart.map((item) =>
-//           item.productId === product.id
-//             ? { ...item, productQuantity: item.productQuantity + 1 }
-//             : item
-//         );
-
-//         // Save the updated cart item to the database
-//         fetch('http://localhost:8081/add-to-cart', {
-//           method: 'POST',
-//           headers: {
-//             'Content-Type': 'application/json',
-//           },
-//           body: JSON.stringify({
-//             productId: product.id,
-//             productName: product.name,
-//             productQuantity: existingProduct.productQuantity + 1,
-//           }),
-//         })
-//           .then((res) => res.json())
-//           .then((data) => console.log(data))
-//           .catch((err) => console.log(err));
-
-//         return updatedCart;
-//       } else {
-//         const updatedCart = [
-//           ...prevCart,
-//           {
-//             productId: product.id,
-//             productName: product.name,
-//             productQuantity: 1,
-//           },
-//         ];
-
-//         // Save the new cart item to the database
-//         fetch('http://localhost:8081/add-to-cart', {
-//           method: 'POST',
-//           headers: {
-//             'Content-Type': 'application/json',
-//           },
-//           body: JSON.stringify({
-//             productId: product.id,
-//             productName: product.name,
-//             productQuantity: 1,
-//           }),
-//         })
-//           .then((res) => res.json())
-//           .then((data) => console.log(data))
-//           .catch((err) => console.log(err));
-
-//         return updatedCart;
-//       }
-//     });
-//   };
 
     const saveCartToDatabase = async (userId) => {
         try {
-            await fetch(`/api/cart/${userId}`, {
+            await fetch(`http://localhost:8081/api/cart/${userId}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ cartItems }),
             });
+            console.log("Cart saved to database successfully");
         } catch (err) {
             console.error("Error saving cart to database:", err);
         }

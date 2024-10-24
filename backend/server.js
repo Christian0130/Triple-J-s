@@ -46,6 +46,33 @@ app.get('/products', (req, res) => {
 //     });
 // });
 
+app.post('/api/cart/:userId', (req, res) => {
+    const userId = req.params.userId; // User ID from request params
+    const cartItems = req.body.cartItems; // Cart items from the request body (array of products)
+
+    const deleteCartQuery = 'DELETE FROM user_cart WHERE userId = ?';
+    const insertCartQuery = 'INSERT INTO user_cart (userId, productId, quantity) VALUES ?';
+
+    // Delete the existing cart for the user (so we can insert updated cart items)
+    db.query(deleteCartQuery, [userId], (err, result) => {
+        if (err) return res.status(500).json("Error clearing cart");
+
+        if (cartItems.length > 0) {
+            // Prepare cart items to be inserted into the database
+            const cartData = cartItems.map(item => [userId, item.id, item.quantity]);
+
+            // Insert new cart items into the database
+            db.query(insertCartQuery, [cartData], (err, result) => {
+                if (err) return res.status(500).json("Error saving cart items");
+
+                return res.status(200).json("Cart saved successfully");
+            });
+        } else {
+            // If there are no cart items, just return success
+            return res.status(200).json("Cart is empty");
+        }
+    });
+});
 
 
 //get the items from cart
@@ -62,7 +89,7 @@ app.listen(8081, ()=> {
 })
 
 // Login endpoint
-app.post('/login', (req, res) => { 
+app.post('/login', (req, res) => {  
     const { username, password } = req.body;
 
     const sql = "SELECT * FROM users WHERE username = ?";
@@ -81,7 +108,7 @@ app.post('/login', (req, res) => {
         // Send back the token and the user id
         res.json({ token, userId: user.userId }); // Add userId in the response
     });
-});
+}); 
 
 
 //Register Endpoint
