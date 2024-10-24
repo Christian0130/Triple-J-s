@@ -1,5 +1,6 @@
 import React, { useContext } from 'react'
 import { ShopContext } from '../../context/shop-context';
+import "./shop.css";
 
 
 const Product = (props) => {
@@ -11,11 +12,10 @@ const Product = (props) => {
       <img src={image} alt="" />
       </div>
       <div className="description">
-        <p><b>{name}</b></p>
-        <p>${price}</p>
-        <p>{quantity}</p>
+        <p>{name}</p>
+        <p>₱{price}</p>
+        <div className="addToCartBttn" onClick={() => addToCart(props.data)}>Add to Cart</div>
       </div>
-      <div className="addToCartBttn" onClick={() => addToCart(props.data)}>Add to Cart</div>
 
     </div>
   )
