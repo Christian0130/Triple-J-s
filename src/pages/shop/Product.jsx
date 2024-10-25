@@ -12,7 +12,9 @@ const Product = (props) => {
       <img src={image} alt="" />
       </div>
       <div className="description">
-        <p>{name}</p>
+        <div className="product-name limit-text-to-2-lines">
+          <p>{name}</p>
+        </div>
         <p>₱{price}</p>
         <div className="addToCartBttn" onClick={() => addToCart(props.data)}>Add to Cart</div>
       </div>
