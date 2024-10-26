@@ -13,7 +13,7 @@ const Shop = () => {
   return (
     <div className='shop'>
       <div className="background-image-container">
-        <img src="https://img.freepik.com/premium-photo/bowls-with-animal-feed_23-2148181713.jpg?semt=ais_hybrid" alt="" />
+        <img src="https://images.pexels.com/photos/16611344/pexels-photo-16611344/free-photo-of-close-up-of-cats-heads.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="" />
         <div className='shopTitle'>Affordable care for your <br /> feathered and furry friends.</div>
         <a href="#shop"><button>Shop Now</button></a>
       </div>
