@@ -12,9 +12,12 @@ const Shop = () => {
 
   return (
     <div className='shop'>
-      <div className='shopTitle'>
-        <h1>Shop</h1>
+      <div className="background-image-container">
+        <img src="https://img.freepik.com/premium-photo/bowls-with-animal-feed_23-2148181713.jpg?semt=ais_hybrid" alt="" />
+        <div className='shopTitle'>Affordable care for your <br /> feathered and furry friends.</div>
+        <a href="#shop"><button>Shop Now</button></a>
       </div>
+      <div className='title' id='shop'><h1>Shop</h1></div>
       <div className="products">
       {products.map((product) => (
         <Product key={product.id} data={product}/>
