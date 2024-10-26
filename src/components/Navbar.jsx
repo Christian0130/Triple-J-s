@@ -36,13 +36,15 @@ const Navbar = () => {
 
   return (
     <div className='navbar'>
-      <div className="links">
-        <Link to="/"> Shop </Link>
-        <Link to={"/cart"}>
-        <ShoppingCart size={32}/>
-        </Link>
-        <button onClick={handleLogout}>Logout</button>
-      </div>
+        <div className="left-side-links">
+          <Link to="/"> Shop </Link>
+        </div>
+        <div className="right-side-links">
+          <Link to={"/cart"}>
+          <ShoppingCart size={32}/>
+          </Link>
+          <button onClick={handleLogout}>Logout</button>
+        </div>
     </div>
   )
 }

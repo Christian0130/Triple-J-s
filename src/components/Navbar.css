@@ -6,20 +6,44 @@
     height: 60px;
     background-color: white;
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
     z-index: 5;
+    width: 100%;
+  }
+
+  .navbar button{
+    background-color: white;
+    color: black;
+    padding: 5px 10px;
+    border: 1px solid black;
+    font-size: 12px;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+
+  .navbar button:hover{
+    opacity: .5;
   }
   
-  .links {
-    margin-right: 50px;
-    display: flex;
-    align-items: center;
-  }
-  
-  .links a {
+  .navbar a {
     text-decoration: none;
     color: black;
-    margin-left: 20px;
     font-size: 25px;
+  }
+
+  .left-side-links{
+    display: flex;
+    align-items: center;
+    width: 50%;
+    margin-left: 40px;
+  }
+
+  .right-side-links{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-right: 40px;
+    width: 8%;
   }

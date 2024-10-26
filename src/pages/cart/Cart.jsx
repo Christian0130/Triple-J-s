@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import { ShopContext } from '../../context/shop-context';
+import "../cart/cart.css";
 
 const Cart = () => {
   const { cartItems, products } = useContext(ShopContext);
@@ -8,7 +9,7 @@ const Cart = () => {
   console.log('Products:', products);
 
   if (cartItems.length === 0 || products.length === 0) {
-    return <p>Your cart is empty</p>; // Handle empty case if data isn't ready
+    return <p className='cart-message'>Your cart is empty</p>; // Handle empty case if data isn't ready
   }
 
   const normalizedCartItems = cartItems.map(cartItem => {
