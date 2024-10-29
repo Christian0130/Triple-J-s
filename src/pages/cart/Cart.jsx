@@ -19,17 +19,23 @@ const Cart = () => {
 
   return (
     <div>
-      <h1>Your Cart</h1>
+      <h1 className='cart'>Your Cart</h1>
       {normalizedCartItems.length > 0 ? (
-        <ul>
+      <div className='cart-container'>
+        <div className='cart-left'>
           {normalizedCartItems.map((item) => (
-            <li key={item.id}>
-              <h2>{item.name}</h2>
+            <div key={item.id} className='cart-item'>
+              <p>{item.name}</p>
               <p>Price: ${item.price}</p>
               <p>Quantity: {item.quantity}</p>
-            </li>
+              <button>Remove</button>
+            </div>
           ))}
-        </ul>
+        </div>
+        <div className='cart-right'>
+          
+        </div>
+      </div>
       ) : (
         <p>Your cart is empty</p>
       )}

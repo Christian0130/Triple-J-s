@@ -46,6 +46,8 @@ app.get('/products', (req, res) => {
 //     });
 // });
 
+
+
 app.post('/api/cart/:userId', (req, res) => {
     const userId = req.params.userId; // User ID from request params
     const cartItems = req.body.cartItems; // Cart items from the request body (array of products)
@@ -120,5 +122,22 @@ app.post('/register', async (req, res) => {
     db.query(sql, [username, hashedPassword], (err, result) => {
         if (err) return res.json(err);
         return res.json("User registered successfully");
+    });
+});
+
+
+
+app.get('/api/cart/:userId', (req, res) => {
+    const userId = req.params.userId;
+    const sql = `
+        SELECT user_cart.productId, user_cart.quantity, products.name
+        FROM user_cart
+        JOIN products ON user_cart.productId = products.id
+        WHERE user_cart.userId = ?
+    `;
+
+    db.query(sql, [userId], (err, results) => {
+        if (err) return res.status(500).json("Error retrieving cart items");
+        return res.json(results); // Results now include { productId, quantity, name }
     });
 });

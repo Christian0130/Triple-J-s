@@ -95,7 +95,7 @@ export const ShopContextProvider = (props) => {
         });
     }
     return (
-    <ShopContext.Provider value={{cartItems, products, addToCart, saveCartToDatabase}}>
+    <ShopContext.Provider value={{cartItems, products, addToCart, saveCartToDatabase, setCartItems}}>
       {props.children}
     </ShopContext.Provider>
   )

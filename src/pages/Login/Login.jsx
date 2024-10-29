@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react'; 
 import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom'; // Import useNavigate
+import { Link } from 'react-router-dom';
+import { ShopContext } from '../../context/shop-context'; // Import your context
 import './login.css';
 
 const Login = () => {
@@ -9,6 +10,30 @@ const Login = () => {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
     const navigate = useNavigate();
+    
+    const { setCartItems, products } = useContext(ShopContext); // Access context functions and state
+
+    const fetchCartItems = async (userId) => {
+        try {
+            const response = await fetch(`http://localhost:8081/api/cart/${userId}`);
+            const cartData = await response.json();
+
+            // Format fetched data to match state structure
+            const updatedCartItems = cartData.map(cartItem => {
+                const productDetails = products.find(product => product.id === cartItem.productId);
+                return {
+                    id: cartItem.productId,
+                    name: productDetails ? productDetails.name : "Unknown Product",
+                    quantity: cartItem.quantity,
+                    userId: userId
+                };
+            });
+
+            setCartItems(updatedCartItems); // Update cart items in global state
+        } catch (err) {
+            console.error("Error fetching cart items:", err);
+        }
+    };
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -25,17 +50,19 @@ const Login = () => {
             const data = await response.json();
 
             if (response.ok) {
-                // Handle successful login (e.g., store token, redirect, etc.)
-                localStorage.setItem('token', data.token); // Store token in local storage
+                localStorage.setItem('token', data.token);
                 localStorage.setItem('userId', data.userId);
-                setSuccess("Login successful!"); // Optional success message
-                // You can also redirect to a protected route or dashboard here
-                navigate('/');
+                setSuccess("Login successful!");
+
+                // Fetch the user's cart items after login
+                await fetchCartItems(data.userId);
+
+                navigate('/'); // Redirect to homepage or protected route
             } else {
-                throw new Error(data); // Handle errors
+                throw new Error(data);
             }
         } catch (err) {
-            setError(err.message); // Set error message
+            setError(err.message);
         }
     };
 
@@ -46,23 +73,22 @@ const Login = () => {
             {error && <p style={{ color: 'red' }}>{error}</p>}
             {success && <p style={{ color: 'green' }}>{success}</p>}
             <form onSubmit={handleLogin}>
-                    <input
-                        placeholder='Username'
-                        type="text"
-                        id="username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        required
-                    />
-                    <input
-                        placeholder='Password'
-                        type="password"
-                        id="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
-                
+                <input
+                    placeholder='Username'
+                    type="text"
+                    id="username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    required
+                />
+                <input
+                    placeholder='Password'
+                    type="password"
+                    id="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                />
                 <button type="submit">Login</button>
             </form>
             <Link to={'/register'} className='link'>Register</Link>
