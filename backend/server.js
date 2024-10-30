@@ -108,25 +108,35 @@ app.post('/login', (req, res) => {
         const token = jwt.sign({ id: user.userId }, 'your_secret_key', { expiresIn: '1h' });
 
         // Send back the token and the user id
-        res.json({ token, userId: user.userId }); // Add userId in the response
+        res.json({ token, userId: user.userId, role: user.role }); // Add userId in the response
     });
 }); 
 
 
-//Register Endpoint
+// //Register Endpoint
+// app.post('/register', async (req, res) => {
+//     const { username, password } = req.body;
+//     const hashedPassword = await bcrypt.hash(password, 10); // Hash the password
+
+//     const sql = "INSERT INTO users (username, password) VALUES (?, ?)";
+//     db.query(sql, [username, hashedPassword], (err, result) => {
+//         if (err) return res.json(err);
+//         return res.json("User registered successfully");
+//     });
+// });
+
 app.post('/register', async (req, res) => {
-    const { username, password } = req.body;
+    const { username, password, fullname, address } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10); // Hash the password
 
-    const sql = "INSERT INTO users (username, password) VALUES (?, ?)";
-    db.query(sql, [username, hashedPassword], (err, result) => {
+    const sql = "INSERT INTO users (username, password, name, userAddress) VALUES (?, ?, ?, ?)";
+    db.query(sql, [username, hashedPassword, fullname, address], (err, result) => {
         if (err) return res.json(err);
         return res.json("User registered successfully");
     });
 });
 
-
-
+//cart endpoint
 app.get('/api/cart/:userId', (req, res) => {
     const userId = req.params.userId;
     const sql = `

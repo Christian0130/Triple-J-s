@@ -34,11 +34,10 @@ const Login = () => {
             console.error("Error fetching cart items:", err);
         }
     };
-
     const handleLogin = async (e) => {
         e.preventDefault();
 
-        try { 
+        try {
             const response = await fetch('http://localhost:8081/login', {
                 method: 'POST',
                 headers: {
@@ -50,19 +49,25 @@ const Login = () => {
             const data = await response.json();
 
             if (response.ok) {
+                // Save token, userId, and role to local storage
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('userId', data.userId);
+                localStorage.setItem('role', data.role);
+                
                 setSuccess("Login successful!");
 
-                // Fetch the user's cart items after login
-                await fetchCartItems(data.userId);
-
-                navigate('/'); // Redirect to homepage or protected route
+                // Redirect based on role
+                if (data.role === 'admin') {
+                    navigate('/admin-dashboard'); // Redirect to admin dashboard
+                } else {
+                    await fetchCartItems(data.userId); // Fetch cart items for regular users
+                    navigate('/'); // Redirect to user homepage
+                }
             } else {
-                throw new Error(data);
+                throw new Error(data); // Handle errors
             }
         } catch (err) {
-            setError(err.message);
+            setError(err.message); // Set error message
         }
     };
 

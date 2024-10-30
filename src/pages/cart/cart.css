@@ -17,22 +17,20 @@
     margin-top: 20px;
     margin-left: 70px;
     margin-right: 70px;
-    background-color: lightgreen;
 }
 
 .cart-left{
     width: 50%;
-    background-color: lightblue;
 }
 
 .cart-item{
-    background-color: lightpink;
+    background-color: #F6EEE3;
     padding-left: 20px;
     padding-top: 10px;
     padding-bottom: 10px;
     border-radius: 20px;
     margin: 0px 0px 5px 0px;
-    border: 1px solid black;
+    box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px; 
 }
 
 .cart-item p:nth-child(1){
@@ -77,7 +75,7 @@
 .cart-right{
     border-radius: 25px;
     width: 48%;
-    background-color: lightpink;
-    height: 475px;
-    border: 1px solid black;
+    background-color: #F6EEE3;
+    height: 470px;
+    box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px; 
 }

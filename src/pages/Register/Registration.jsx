@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom'; // Import useNavigate
 const Registration = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [fullname, setFullname] = useState('');
+    const [address, setAddress] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
@@ -18,7 +20,7 @@ const Registration = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ username, password }),
+                body: JSON.stringify({ username, password, fullname, address }),
             });
 
             if (!response.ok) {
@@ -29,6 +31,8 @@ const Registration = () => {
             setSuccess(data.message || 'Registration successful! Please log in.');
             setUsername('');
             setPassword('');
+            setFullname('');
+            setAddress('');
         } catch (err) {
             setError(err.message);
         }
@@ -54,6 +58,23 @@ const Registration = () => {
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        required
+                    />
+                </div>                <div>
+                    <label>Full Name:</label>
+                    <input
+                        type="text"
+                        value={fullname}
+                        onChange={(e) => setFullname(e.target.value)}
+                        required
+                    />
+                </div>
+                <div>
+                    <label>Delivery Address:</label>
+                    <input
+                        type="text"
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
                         required
                     />
                 </div>
