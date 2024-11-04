@@ -106,9 +106,14 @@ app.post('/login', (req, res) => {
 
         // Create and assign a token
         const token = jwt.sign({ id: user.userId }, 'your_secret_key', { expiresIn: '1h' });
-
+        
         // Send back the token and the user id
-        res.json({ token, userId: user.userId, role: user.role }); // Add userId in the response
+        res.json({
+             token, userId: user.userId, 
+             role: user.role,
+             username: user.name,
+             address:  user.userAddress
+            });
     });
 }); 
 
@@ -149,5 +154,89 @@ app.get('/api/cart/:userId', (req, res) => {
     db.query(sql, [userId], (err, results) => {
         if (err) return res.status(500).json("Error retrieving cart items");
         return res.json(results); // Results now include { productId, quantity, name }
+    });
+});
+
+// app.post('/api/order/:userId', (req, res) => {
+//     const userId = req.params.userId;
+//     const orderItems = req.body; // Array of items coming from the request body
+
+//     if (!orderItems || orderItems.length === 0) {
+//         return res.status(400).json("No items to order");
+//     }
+
+//     // Create a new order
+//     const orderDate = new Date(); // Current date
+//     const createOrderQuery = 'INSERT INTO orders (userId, orderDate) VALUES (?, ?)';
+    
+//     db.query(createOrderQuery, [userId, orderDate], (err, orderResult) => {
+//         if (err) return res.status(500).json("Error creating order");
+
+//         const orderId = orderResult.insertId; // Get the new order's ID
+
+//         // Prepare items for insertion into order_items
+//         const orderItemsData = orderItems.map(item => [orderId, item.productId, item.quantity]);
+
+//         const insertOrderItemsQuery = 'INSERT INTO order_items (orderId, productId, quantity) VALUES ?';
+//         db.query(insertOrderItemsQuery, [orderItemsData], (err) => {
+//             if (err) return res.status(500).json("Error saving order items");
+            
+//             // Optionally clear the user_cart if needed
+//             const deleteCartQuery = 'DELETE FROM user_cart WHERE userId = ?';
+//             db.query(deleteCartQuery, [userId], (err) => {
+//                 if (err) return res.status(500).json("Error clearing cart after order");
+
+//                 return res.status(200).json("Order placed successfully");
+//             });
+//         });
+//     });
+// });
+
+// Place Order Endpoint
+app.post('/api/place-order/:userId', (req, res) => {
+    const userId = req.params.userId;
+    const { cartItems, totalAmount } = req.body;
+
+    // Insert order into the `orders` table
+    const insertOrderQuery = `INSERT INTO orders (user_id, total_amount) VALUES (?, ?)`;
+
+    db.query(insertOrderQuery, [userId, totalAmount], (err, orderResult) => {
+        if (err) return res.status(500).json({ error: "Failed to create order" });
+
+        const orderId = orderResult.insertId;
+
+        // Prepare data for bulk insertion into the `order_items` table
+        const orderItems = cartItems.map(item => [orderId, item.id, item.quantity, item.price]);
+
+        const insertOrderItemsQuery = `INSERT INTO order_items (order_id, product_id, quantity, price) VALUES ?`;
+
+        db.query(insertOrderItemsQuery, [orderItems], (err, itemsResult) => {
+            if (err) return res.status(500).json({ error: "Failed to add order items" });
+
+            return res.status(200).json({ message: "Order placed successfully", orderId });
+        });
+    });
+});
+
+//orders endpoint
+app.get('/api/admin/orders', (req, res) => {
+    const getOrdersQuery = `
+        SELECT 
+            orders.order_id, 
+            orders.user_id, 
+            orders.order_date, 
+            orders.status, 
+            orders.total_amount,
+            users.name as user_name,
+            GROUP_CONCAT(CONCAT(order_items.product_id, ':', order_items.quantity, ':', order_items.price)) as items
+        FROM orders
+        JOIN order_items ON orders.order_id = order_items.order_id
+        JOIN users ON orders.user_id = users.userId
+        GROUP BY orders.order_id;
+    `;
+
+    db.query(getOrdersQuery, (err, results) => {
+        if (err) return res.status(500).json("Error retrieving orders");
+        res.status(200).json(results);
     });
 });

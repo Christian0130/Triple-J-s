@@ -1,36 +1,47 @@
-import './App.css'; 
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import './App.css';  
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import Navbar from './components/Navbar';
-import Shop from './pages/shop/shop';
+import Shop from './pages/shop/Shop';
 import Cart from './pages/cart/Cart';
 import { ShopContextProvider } from './context/shop-context';
 import Login from './pages/Login/Login';
 import Registration from './pages/Register/Registration';
 import AdminDashboard from './pages/admin/adminDashboard';
+import AdminNavbar from './components/AdminNavbar';
+import Orders from './pages/orders/Orders';
+import ManageProducts from './pages/manageProducts/ManageProducts';
 
 function App() {
   const location = useLocation(); // Access the current route
-   // Define an array of paths where the Navbar should not be displayed
-  const noNavbarPaths = ['/login', '/register', '/admin-dashboard'];
+  const role = localStorage.getItem('role');
+  const noNavbarPaths = ['/login', '/register'];
+
+  const renderNavbar = () => {
+    if (noNavbarPaths.includes(location.pathname)) {
+      return null;
+    } else if (role === 'admin') {
+      return <AdminNavbar />;
+    } else {
+      return <Navbar />;
+    }
+  };
 
   return (
     <div className="app">
       <ShopContextProvider>
         {/* Conditionally render Navbar based on the route */}
-        {location.pathname !== '/login' && location.pathname !== '/register' && <Navbar />}
-                {/* Conditionally render Navbar based on the route */}
-                {/* {!noNavbarPaths.includes(location.pathname) && <Navbar />} */}
+        {renderNavbar()}
+        
         <Routes>
-          <Route path='/register' element={<Registration />} />
-          <Route path='/' element={<Shop />} />
-          <Route path='/cart' element={<Cart />} />
-          <Route path='/login' element={<Login />} /> {/* Login Route */}
-          {/* Admin Dashboard Route - Only accessible if role is 'admin' */}
-          <Route 
-            // path='/admin-dashboard' 
-            // element={role === 'admin' ? <AdminDashboard /> : <Navigate to="/" />}
-            path='/admin-dashboard' element={<AdminDashboard/>}
-          />
+          <Route path="/" element={<Navigate to="/shop" />} /> {/* Redirect root to Shop */}
+          <Route path="/shop" element={<Shop />} />
+          <Route path="/register" element={<Registration />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/login" element={<Login />} /> 
+          <Route path="/orders" element={<Orders />} />
+          <Route path="/manage-products" element={<ManageProducts />} />
+          <Route path="/admin-dashboard" element={<AdminDashboard />} />
+          {/* Add a NotFound route if needed */}
         </Routes>
       </ShopContextProvider>
     </div>

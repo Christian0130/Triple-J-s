@@ -8,6 +8,9 @@ import { ShoppingCart } from 'phosphor-react'
 const Navbar = () => {
   const navigate = useNavigate();
   const { saveCartToDatabase } = useContext(ShopContext);
+  const userName = localStorage.getItem('name');
+
+  console.log(`User Name is: ${userName}`)
 
   const handleLogout = async () => {
     // const userId = localStorage.getItem('userId');
@@ -27,6 +30,7 @@ const Navbar = () => {
 
     // Clear user ID and cart items from local storage and state
     localStorage.removeItem('userId');
+    localStorage.removeItem('token');
 
     // Optionally redirect the user or show a success message
     console.log("User logged out successfully");

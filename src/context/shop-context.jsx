@@ -1,10 +1,12 @@
 import React, { createContext, useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom';
 
 export const ShopContext = createContext();
 
 export const ShopContextProvider = (props) => {
     const [cartItems, setCartItems] = useState([]);
     const [products, setProducts] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetch('http://localhost:8081/products')
@@ -57,6 +59,8 @@ export const ShopContextProvider = (props) => {
         const userId = localStorage.getItem('userId'); // Get the user ID from localStorage
         if (!userId) {
             console.error('User not logged in');
+            navigate('/login');
+            window.alert("Please Log in")
             return;
         }
     
@@ -90,12 +94,17 @@ export const ShopContextProvider = (props) => {
     };
 
     const removeFromCart = (productId) => {
-        setCartItems((prevCartItems ) => {
-            return prevCart.filter(item => item.id !== productId)
+        setCartItems((prevCartItems) => {
+            return prevCartItems.filter(item => item.id !== productId)
         });
     }
+
+    const clearCart = () => {
+        setCartItems([]); // Clears all items in the cart
+    };
+
     return (
-    <ShopContext.Provider value={{cartItems, products, addToCart, saveCartToDatabase, setCartItems}}>
+    <ShopContext.Provider value={{cartItems, products, addToCart, saveCartToDatabase, setCartItems, removeFromCart, clearCart}}>
       {props.children}
     </ShopContext.Provider>
   )

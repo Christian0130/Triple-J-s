@@ -24,20 +24,21 @@
 }
 
 .cart-item{
-    background-color: #F6EEE3;
+    background-color: white;
     padding-left: 20px;
+    padding-right: 20px;
     padding-top: 10px;
     padding-bottom: 10px;
-    border-radius: 20px;
-    margin: 0px 0px 5px 0px;
+    margin: 0px 0px 3px 0px;
     box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px; 
 }
 
-.cart-item p:nth-child(1){
+.item-name{
     font-size: 23px;
-    font-weight: 700;
+    font-weight: 500;
     margin-bottom: 10px;
 }
+
 .cart-item p:nth-child(3){
     margin-bottom: 10px;
 }
@@ -47,35 +48,183 @@
 }
 
 .cart-item button{
-    background-color: #FFFFFF;
-    border: 0;
-    border-radius: .5rem;
+    padding: 8px 10px;
+    align-items: center;
+    appearance: none;
+    background-color: #FCFCFD;
+    border-radius: 4px;
+    border-width: 0;
+    box-shadow: rgba(45, 35, 66, 0.4) 0 2px 4px,rgba(45, 35, 66, 0.3) 0 7px 13px -3px,#D6D6E7 0 -3px 0 inset;
     box-sizing: border-box;
-    color: #111827;
-    font-family: "Inter var",ui-sans-serif,system-ui,-apple-system,system-ui,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
-    font-size: .875rem;
-    font-weight: 600;
-    line-height: 1.25rem;
-    padding: 5px 8px;
-    text-align: center;
-    text-decoration: none #D1D5DB solid;
-    text-decoration-thickness: auto;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    color: black;
     cursor: pointer;
+    display: inline-flex;
+    font-family: "JetBrains Mono",monospace;
+    justify-content: center;
+    line-height: 1;
+    list-style: none;
+    overflow: hidden;
+    padding-left: 16px;
+    padding-right: 16px;
+    position: relative;
+    text-align: left;
+    text-decoration: none;
+    transition: box-shadow .15s,transform .15s;
     user-select: none;
     -webkit-user-select: none;
     touch-action: manipulation;
+    white-space: nowrap;
+    will-change: box-shadow,transform;
+    font-size: 14px;
 }
 
 
 .cart-item button:hover {
-  background-color: rgb(249,250,251);
+  opacity: 0.8;
 }
 
 .cart-right{
-    border-radius: 25px;
-    width: 48%;
-    background-color: #F6EEE3;
-    height: 470px;
+    width: 43%;
+    padding-top: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 20px;
+    height: 430px;
+    background-color: white;
+    box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px; 
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.payment{
+    padding: 20px;
+    margin-top: 20px; 
+    height: 120px;  
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.cart-top p{
+    font-size:40px;
+    text-align: center;
+    font-weight: 500;
+    margin: 0;
+    border-bottom: 1px solid black;
+}
+
+.cart-information{
+    background-color: white;
+    margin-bottom: 20px;
+    padding: 10px 0px 15px 20px;
     box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px; 
 }
+
+.cart-information p{
+    margin: 0;
+}
+
+.cart-information p:nth-child(1){
+    font-size: 30px;
+    font-weight: 500;
+}
+
+.address{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.name{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.cart-bottom p{
+    margin: 0;
+}
+
+.cart-bottom div:nth-child(4){
+    border-top: 1px solid black;
+    font-size: 30px;
+    font-weight: 500;
+}
+
+.cart-bottom div{
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.products-ordered{
+    font-size: 30px;
+    font-weight: 500;
+    margin: 10px;
+    margin-top: 55px;
+}
+
+.span{
+    border-top: 1px solid black;
+    padding-top: 8px;
+    font-size: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.payment-method{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    border-top: 1px solid black;
+}
+
+.payment-method p{
+    margin: 0;
+}
+
+.payment-method p:nth-child(2){
+    font-size: 14px;
+    font-weight: 300;
+}
+
+.payment button{
+    width: 100%;
+    height: 40%;
+    align-items: center;
+    appearance: none;
+    background-color: #FCFCFD;
+    border-radius: 4px;
+    border-width: 0;
+    box-shadow: rgba(45, 35, 66, 0.4) 0 2px 4px,rgba(45, 35, 66, 0.3) 0 7px 13px -3px,#D6D6E7 0 -3px 0 inset;
+    box-sizing: border-box;
+    color: black;
+    cursor: pointer;
+    display: inline-flex;
+    font-family: "JetBrains Mono",monospace;
+    justify-content: center;
+    line-height: 1;
+    list-style: none;
+    overflow: hidden;
+    padding-left: 16px;
+    padding-right: 16px;
+    position: relative;
+    text-align: left;
+    text-decoration: none;
+    transition: box-shadow .15s,transform .15s;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    white-space: nowrap;
+    will-change: box-shadow,transform;
+    font-size: 14px;
+}
+
+.payment button:hover {
+    opacity: 0.8;
+  }

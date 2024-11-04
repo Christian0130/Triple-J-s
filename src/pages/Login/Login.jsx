@@ -47,12 +47,16 @@ const Login = () => {
             });
 
             const data = await response.json();
-
+            console.log(`name: ${data.username}`);
+            console.log(`address: ${data.address}`);
+            console.log(`role: ${data.role}`);
             if (response.ok) {
                 // Save token, userId, and role to local storage
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('userId', data.userId);
                 localStorage.setItem('role', data.role);
+                localStorage.setItem('name', data.username);
+                localStorage.setItem('address', data.address);
                 
                 setSuccess("Login successful!");
 
