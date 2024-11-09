@@ -7,8 +7,8 @@ const ManageProducts = () => {
   const [newProduct, setNewProduct] = useState({
     name: '',
     price: '',
-    description: '',
-    imageUrl: ''
+    image: '',
+    quantity: ''
   });
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal visibility state
   // Fetch all products
@@ -31,35 +31,25 @@ const ManageProducts = () => {
   const addProduct = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('/api/products', {
+      const response = await fetch('http://localhost:8081/api/add-product', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newProduct),
       });
       if (response.ok) {
         const updatedProducts = await response.json();
+         // Generate a temporary id if the backend doesn't provide one
+        updatedProducts.id = updatedProducts.id || Date.now(); // Or use Math.random()
         setProducts([...products, updatedProducts]);
-        setNewProduct({ name: '', price: '', description: '', imageUrl: '' });
+        setNewProduct({ name: '', price: '', image: '', quantity: '' });
+        window.alert("Product Added Successfully")
       }
     } catch (err) {
       console.error("Error adding product:", err);
     }
   };
 
-  //sort of delete products ?
-  const softDeleteProduct = async (id) => {
-    try {
-      const response = await fetch(`/api/products/${id}/deactivate`, { method: 'PUT' });
-      if (response.ok) {
-        setProducts(products.map(product => 
-          product.id === id ? { ...product, is_active: false } : product
-        ));
-      }
-    } catch (err) {
-      console.error("Error soft-deleting product:", err);
-    }
-  };
-
+  //Change the product Status
   const toggleProductStatus = async (id, currentStatus) => {
     try {
       const newStatus = currentStatus === 1 ? 0 : 1; // Toggle the status (1 = Active, 0 = Inactive)
@@ -115,8 +105,14 @@ const ManageProducts = () => {
               <input
                 type="text"
                 placeholder="Image URL"
-                value={newProduct.imageUrl}
-                onChange={(e) => setNewProduct({ ...newProduct, imageUrl: e.target.value })}
+                value={newProduct.image}
+                onChange={(e) => setNewProduct({ ...newProduct, image: e.target.value })}
+              />
+              <input
+                type="number"
+                placeholder="Quantity"
+                value={newProduct.quantity}
+                onChange={(e) => setNewProduct({ ...newProduct, quantity: e.target.value })}
               />
               <button type="submit">Add Product</button>
             </form>

@@ -264,7 +264,7 @@ app.put('/api/products/:id/deactivate', (req, res) => {
     const { name, price, image, quantity } = req.body;
 
     // Validate required fields
-    if (!name || price === undefined || quantity === undefined || !status) {
+    if (!name || price === undefined || quantity === undefined) {
         return res.status(400).json({ error: "name, price, image, and quantity are required" });
     }
 
@@ -287,3 +287,78 @@ app.put('/api/products/:id/deactivate', (req, res) => {
         });
     });
     });
+
+
+    //=============================================================================================================//
+    //Api Endpoints For Admin Dashboard
+    app.get('/api/dashboard/total-sales', async (req, res) => {
+        try {
+          const result = await db.query(
+            'SELECT SUM(total_amount) AS totalSales FROM orders WHERE status = "completed"'
+          );
+          res.json({ totalSales: result[0].totalSales || 0 });
+        } catch (error) {
+          console.error('Error fetching total sales:', error);
+          res.status(500).json({ error: 'Server error' });
+        }
+      });
+
+      
+      app.get('/api/dashboard/total-orders', async (req, res) => {
+        try {
+          const result = await db.query('SELECT COUNT(order_id) AS totalOrders FROM orders');
+          res.json({ totalOrders: result[0].totalOrders });
+        } catch (error) {
+          console.error('Error fetching total orders:', error);
+          res.status(500).json({ error: 'Server error' });
+        }
+      });
+
+      app.get('/api/dashboard/top-products', async (req, res) => {
+        try {
+          const result = await db.query(`
+            SELECT p.id, p.name, SUM(oi.quantity) AS totalSold, SUM(oi.quantity * oi.price) AS revenue
+            FROM order_items AS oi
+            JOIN products AS p ON oi.order_id = p.id
+            GROUP BY p.id, p.name
+            ORDER BY totalSold DESC
+            LIMIT 5
+          `);
+          res.json(result);
+        } catch (error) {
+          console.error('Error fetching top products:', error);
+          res.status(500).json({ error: 'Server error' });
+        }
+      });
+
+      app.get('/api/dashboard/orders-status', async (req, res) => {
+        try {
+          const result = await db.query(`
+            SELECT status, COUNT(order_id) AS count
+            FROM orders
+            GROUP BY status
+          `);
+          res.json(result);
+        } catch (error) {
+          console.error('Error fetching orders by status:', error);
+          res.status(500).json({ error: 'Server error' });
+        }
+      });
+        
+      app.get('/api/dashboard/sales-trend', async (req, res) => {
+        try {
+          const result = await db.query(`
+            SELECT DATE(order_date) AS date, SUM(total_amount) AS dailySales
+            FROM orders
+            WHERE status = "completed"
+            GROUP BY DATE(order_date)
+            ORDER BY date ASC
+          `);
+          res.json(result);
+        } catch (error) {
+          console.error('Error fetching sales trend:', error);
+          res.status(500).json({ error: 'Server error' });
+        }
+      });
+      
+      

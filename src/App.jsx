@@ -6,7 +6,7 @@ import Cart from './pages/cart/Cart';
 import { ShopContextProvider } from './context/shop-context';
 import Login from './pages/Login/Login';
 import Registration from './pages/Register/Registration';
-import AdminDashboard from './pages/admin/adminDashboard';
+import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminNavbar from './components/AdminNavbar';
 import Orders from './pages/orders/Orders';
 import ManageProducts from './pages/manageProducts/ManageProducts';
