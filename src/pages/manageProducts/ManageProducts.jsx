@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import "./manageProducts.css";
+import Modal from '../../components/Modal';
 
 const ManageProducts = () => {
   const [products, setProducts] = useState([]);
@@ -8,14 +10,22 @@ const ManageProducts = () => {
     description: '',
     imageUrl: ''
   });
-
+  const [isModalOpen, setIsModalOpen] = useState(false); // Modal visibility state
   // Fetch all products
   useEffect(() => {
-    fetch('http://localhost:8081/products')
-      .then((res) => res.json())
-      .then((data) => setProducts(data))
-      .catch((err) => console.error(err));
-  }, []);
+    const fetchProducts = async () => {
+        try {
+            const response = await fetch('http://localhost:8081/api/admin/products');
+            const data = await response.json();
+            setProducts(data); // Set both active and inactive products
+        } catch (error) {
+            console.error('Error fetching products:', error);
+        }
+    };
+
+    fetchProducts();
+}, []);
+
 
   // Add new product
   const addProduct = async (e) => {
@@ -36,61 +46,114 @@ const ManageProducts = () => {
     }
   };
 
-  // Delete product
-  const deleteProduct = async (id) => {
+  //sort of delete products ?
+  const softDeleteProduct = async (id) => {
     try {
-      const response = await fetch(`/api/products/${id}`, { method: 'DELETE' });
+      const response = await fetch(`/api/products/${id}/deactivate`, { method: 'PUT' });
       if (response.ok) {
-        setProducts(products.filter((product) => product.id !== id));
+        setProducts(products.map(product => 
+          product.id === id ? { ...product, is_active: false } : product
+        ));
       }
     } catch (err) {
-      console.error("Error deleting product:", err);
+      console.error("Error soft-deleting product:", err);
     }
   };
 
+  const toggleProductStatus = async (id, currentStatus) => {
+    try {
+      const newStatus = currentStatus === 1 ? 0 : 1; // Toggle the status (1 = Active, 0 = Inactive)
+      const response = await fetch(`http://localhost:8081/api/products/${id}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      });
+  
+      if (response.ok) {
+        // Update the product's status in the local state
+        setProducts(
+          products.map((product) =>
+            product.id === id ? { ...product, status: newStatus } : product
+          )
+        );
+      }
+    } catch (err) {
+      console.error("Error toggling product status:", err);
+    }
+  };
+  
+
   return (
     <div>
-      <h2>Manage Products</h2>
-      
-      {/* Form to add new product */}
-      <form onSubmit={addProduct}>
-        <input
-          type="text"
-          placeholder="Name"
-          value={newProduct.name}
-          onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
-        />
-        <input
-          type="number"
-          placeholder="Price"
-          value={newProduct.price}
-          onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
-        />
-        <input
-          type="text"
-          placeholder="Description"
-          value={newProduct.description}
-          onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
-        />
-        <input
-          type="text"
-          placeholder="Image URL"
-          value={newProduct.imageUrl}
-          onChange={(e) => setNewProduct({ ...newProduct, imageUrl: e.target.value })}
-        />
-        <button type="submit">Add Product</button>
-      </form>
+      <h2 className='product-manager'>Product Manager</h2>
 
-      {/* List of current products */}
-      <ul>
-        {products.map((product) => (
-          <li key={product.id}>
-            <p>{product.name}</p>
-            <p>Price: ${product.price}</p>
-            <button onClick={() => deleteProduct(product.id)}>Delete</button>
-          </li>
-        ))}
-      </ul>
+      <div className='open-modal-button-container'>
+              {/* Button to open modal */}
+        <button onClick={() => setIsModalOpen(true)} className="open-modal-button">
+          Add New Product
+        </button>
+      </div>
+
+      {/* Modal for adding a new product */}
+      {isModalOpen && (
+        <Modal onClose={() => setIsModalOpen(false)}>
+          <div className='form-container'>
+            <h2>Add New Product</h2>
+            <form onSubmit={addProduct} className='addProduct-form'>
+              <input
+                type="text"
+                placeholder="Name"
+                value={newProduct.name}
+                onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
+              />
+              <input
+                type="number"
+                placeholder="Price"
+                value={newProduct.price}
+                onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
+              />
+              <input
+                type="text"
+                placeholder="Image URL"
+                value={newProduct.imageUrl}
+                onChange={(e) => setNewProduct({ ...newProduct, imageUrl: e.target.value })}
+              />
+              <button type="submit">Add Product</button>
+            </form>
+          </div>
+        </Modal>
+      )}
+    
+
+      <div className='table-container'>
+        <table className='fl-table'>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Price</th>
+              <th>quantity</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {products.map((product) => (
+              <tr key={product.id}>
+                <td>{product.name}</td>
+                <td>{product.price}</td>
+                <td>{product.quantity}</td>
+                <td>{product.status === 1 ? "Active" : "Inactive"}</td>
+                <td>
+                  {/* Add a button to toggle the product status */}
+                  <button onClick={() => toggleProductStatus(product.id, product.status)}>
+                    {product.status === 1 ? "Deactivate" : "Activate"}
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

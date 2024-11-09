@@ -15,14 +15,17 @@ function App() {
   const location = useLocation(); // Access the current route
   const role = localStorage.getItem('role');
   const noNavbarPaths = ['/login', '/register'];
+  console.log(role);
 
   const renderNavbar = () => {
     if (noNavbarPaths.includes(location.pathname)) {
       return null;
-    } else if (role === 'admin') {
-      return <AdminNavbar />;
-    } else {
+    } else if (role  === null) {
       return <Navbar />;
+    } else if (role === 'user') {
+      return <Navbar />;
+    } else {
+      return <AdminNavbar />;
     }
   };
 

@@ -21,12 +21,23 @@ app.get('/', (req, res) => {
 })
 //get the products from the database
 app.get('/products', (req, res) => {
-    const sql = "SELECT * FROM products"
+    const sql = "SELECT * FROM products WHERE status = true"
     db.query(sql, (err, data) => {
         if(err) return res.json(err);
         return res.json(data);
     })
 })
+
+//get the products for the admin
+app.get('/api/admin/products', (req, res) => {
+    const sql = "SELECT * FROM products"; // Do not filter by status for this endpoint
+    db.query(sql, (err, data) => {
+        if (err) {
+            return res.status(500).json({ message: 'Error fetching products' });
+        }
+        return res.json(data);
+    });
+});
 
 // app.post('/add-to-cart', (req, res) => {
 //     const { productId, productName, productQuantity } = req.body;
@@ -157,41 +168,6 @@ app.get('/api/cart/:userId', (req, res) => {
     });
 });
 
-// app.post('/api/order/:userId', (req, res) => {
-//     const userId = req.params.userId;
-//     const orderItems = req.body; // Array of items coming from the request body
-
-//     if (!orderItems || orderItems.length === 0) {
-//         return res.status(400).json("No items to order");
-//     }
-
-//     // Create a new order
-//     const orderDate = new Date(); // Current date
-//     const createOrderQuery = 'INSERT INTO orders (userId, orderDate) VALUES (?, ?)';
-    
-//     db.query(createOrderQuery, [userId, orderDate], (err, orderResult) => {
-//         if (err) return res.status(500).json("Error creating order");
-
-//         const orderId = orderResult.insertId; // Get the new order's ID
-
-//         // Prepare items for insertion into order_items
-//         const orderItemsData = orderItems.map(item => [orderId, item.productId, item.quantity]);
-
-//         const insertOrderItemsQuery = 'INSERT INTO order_items (orderId, productId, quantity) VALUES ?';
-//         db.query(insertOrderItemsQuery, [orderItemsData], (err) => {
-//             if (err) return res.status(500).json("Error saving order items");
-            
-//             // Optionally clear the user_cart if needed
-//             const deleteCartQuery = 'DELETE FROM user_cart WHERE userId = ?';
-//             db.query(deleteCartQuery, [userId], (err) => {
-//                 if (err) return res.status(500).json("Error clearing cart after order");
-
-//                 return res.status(200).json("Order placed successfully");
-//             });
-//         });
-//     });
-// });
-
 // Place Order Endpoint
 app.post('/api/place-order/:userId', (req, res) => {
     const userId = req.params.userId;
@@ -240,3 +216,74 @@ app.get('/api/admin/orders', (req, res) => {
         res.status(200).json(results);
     });
 });
+
+//change pending to completed
+app.put('/api/orders/:orderId/complete', (req, res) => {
+    const orderId = req.params.orderId;
+
+    const updateOrderQuery = 'UPDATE orders SET status = ? WHERE order_id = ?';
+    db.query(updateOrderQuery, ['completed', orderId], (err, result) => {
+        if (err) {
+            console.error("Error updating order status:", err);
+            return res.status(500).json({ message: "Failed to update order status" });
+        }
+        res.status(200).json({ message: "Order status updated successfully" });
+    });
+});
+
+app.put('/api/products/:id/deactivate', (req, res) => {
+    const productId = req.params.id;
+    const sql = 'UPDATE products SET is_active = false WHERE id = ?';
+    
+    db.query(sql, [productId], (err, result) => {
+      if (err) {
+        console.error("Error deactivating product:", err);
+        return res.status(500).json("Failed to deactivate product");
+      }
+      res.status(200).json("Product deactivated successfully");
+    });
+  });
+
+  //toggle status
+  app.put('/api/products/:id/status', (req, res) => {
+    const productId = req.params.id;
+    const { status } = req.body; // Status can be either 1 (Active) or 0 (Inactive)
+  
+    const sql = 'UPDATE products SET status = ? WHERE id = ?';
+    db.query(sql, [status, productId], (err, result) => {
+      if (err) {
+        console.error("Error updating product status:", err);
+        return res.status(500).json("Failed to update product status");
+      }
+      res.status(200).json("Product status updated successfully");
+    });
+  });
+
+
+  app.post('/api/add-product', (req, res) => {
+    const { name, price, image, quantity } = req.body;
+
+    // Validate required fields
+    if (!name || price === undefined || quantity === undefined || !status) {
+        return res.status(400).json({ error: "name, price, image, and quantity are required" });
+    }
+
+    // SQL query to insert a new product
+    const insertProductQuery = `
+        INSERT INTO products (name, price, image, quantity)
+        VALUES (?, ?, ?, ?)
+    `;
+
+    // Execute the query
+    db.query(insertProductQuery, [name, price, image, quantity], (err, result) => {
+        if (err) {
+            console.error("Error inserting product:", err);
+            return res.status(500).json({ error: "Failed to add product" });
+        }
+
+        res.status(201).json({
+            message: "Product added successfully",
+            productId: result.insertId, // return the ID of the newly inserted product
+        });
+    });
+    });
