@@ -4,6 +4,7 @@ import '../App.css'
 import { ShopContext } from '../context/shop-context'
 import { Link, useNavigate } from "react-router-dom"
 import { ShoppingCart } from 'phosphor-react'
+import logo from '../images/logo.png'
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -40,9 +41,11 @@ const Navbar = () => {
 
   return (
     <div className='navbar'>
-        <div className="left-side-links">
-          <Link to="/"> Shop </Link>
+      <div className='adminNavbar-left'>
+        <div  className='navbar-image-container'>
+          <img src={logo} alt="" />
         </div>
+      </div>
         <div className="right-side-links">
           <Link to={"/cart"}>
           <ShoppingCart size={32}/>

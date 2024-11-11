@@ -1,3 +1,64 @@
 .admin-dashboard{
     margin: 100px 40px 0px 40px;
 }
+
+.data-flex{
+    width: 100%;
+    height: 155px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.data-flex .data-container:nth-child(1){
+    background-color: #e9edc9;
+}
+
+.data-flex .data-container:nth-child(2){
+    background-color: #8ecae6;
+}
+
+.data-flex .data-container:nth-child(3){
+    background-color: #ffd166;
+}
+
+.data-flex .data-container:nth-child(4){
+    background-color: #06d6a0;
+
+}
+
+.data-container{
+    width: 20%;
+    background-color: lightgreen;
+    padding: 10px 20px;
+    border-radius: 15px;
+}
+
+.data-title{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.data-title p{
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.data{
+    text-align: center;
+    font-size: 35px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.topProducts-table-container{
+    margin-top: 20px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    padding: 10px 5px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.topProducts-table-container h3{
+    border-bottom: 1px solid gray;
+}

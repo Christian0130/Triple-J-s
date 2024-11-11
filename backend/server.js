@@ -291,45 +291,111 @@ app.put('/api/products/:id/deactivate', (req, res) => {
 
     //=============================================================================================================//
     //Api Endpoints For Admin Dashboard
-    app.get('/api/dashboard/total-sales', async (req, res) => {
-        try {
-          const result = await db.query(
-            'SELECT SUM(total_amount) AS totalSales FROM orders WHERE status = "completed"'
-          );
-          res.json({ totalSales: result[0].totalSales || 0 });
-        } catch (error) {
+    app.get('/api/total-sales', async (req, res) => {
+      try {
+          const result = await new Promise((resolve, reject) => {
+              db.query('SELECT SUM(total_amount) AS totalSales FROM orders WHERE status = "completed"', (error, results) => {
+                  if (error) reject(error);
+                  else resolve(results);
+              });
+          });
+          
+          // Extract totalSales from the result
+          const totalSales = result && result[0] && result[0].totalSales ? result[0].totalSales : 0;
+          res.json({ totalSales });
+      } catch (error) {
           console.error('Error fetching total sales:', error);
-          res.status(500).json({ error: 'Server error' });
-        }
-      });
-
+          res.status(500).json({ error: 'Error fetching total sales' });
+      }
+  });
+  
       
-      app.get('/api/dashboard/total-orders', async (req, res) => {
-        try {
-          const result = await db.query('SELECT COUNT(order_id) AS totalOrders FROM orders');
-          res.json({ totalOrders: result[0].totalOrders });
-        } catch (error) {
-          console.error('Error fetching total orders:', error);
-          res.status(500).json({ error: 'Server error' });
+  app.get('/api/total-orders', (req, res) => {
+    new Promise((resolve, reject) => {
+      db.query('SELECT COUNT(*) AS totalOrders FROM orders WHERE status = "completed"', (err, result) => {
+        if (err) {
+          console.error('Error fetching total orders:', err);
+          reject(err);
+        } else {
+          const totalOrders = result && result[0] && result[0].totalOrders ? result[0].totalOrders : 0;
+          resolve(totalOrders);
         }
       });
+    })
+    .then((totalOrders) => {
+      res.json({ totalOrders });
+    })
+    .catch((error) => {
+      res.status(500).json({ error: 'Error fetching total orders' });
+    });
+  });
 
-      app.get('/api/dashboard/top-products', async (req, res) => {
-        try {
-          const result = await db.query(`
+  app.get('/api/total-orders-pending', (req, res) => {
+    new Promise((resolve, reject) => {
+      db.query('SELECT COUNT(*) AS totalOrders FROM orders WHERE status = "pending"', (err, result) => {
+        if (err) {
+          console.error('Error fetching total orders:', err);
+          reject(err);
+        } else {
+          const totalOrders = result && result[0] && result[0].totalOrders ? result[0].totalOrders : 0;
+          resolve(totalOrders);
+        }
+      });
+    })
+    .then((totalOrders) => {
+      res.json({ totalOrders });
+    })
+    .catch((error) => {
+      res.status(500).json({ error: 'Error fetching total orders' });
+    });
+  });
+
+  app.get('/api/total-products', (req, res) => {
+    new Promise((resolve, reject) => {
+      db.query('SELECT COUNT(*) AS totalProducts FROM products WHERE status = 1', (err, result) => {
+        if (err) {
+          console.error('Error fetching total products:', err);
+          reject(err);
+        } else {
+          const totalProducts = result && result[0] && result[0].totalProducts ? result[0].totalProducts : 0;
+          resolve(totalProducts);
+        }
+      });
+    })
+    .then((totalProducts) => {
+      res.json({ totalProducts });
+    })
+    .catch((error) => {
+      res.status(500).json({ error: 'Error fetching total products' });
+    });
+  });
+  
+      app.get('/api/top-products', (req, res) => {
+        new Promise((resolve, reject) => {
+          db.query(`
             SELECT p.id, p.name, SUM(oi.quantity) AS totalSold, SUM(oi.quantity * oi.price) AS revenue
             FROM order_items AS oi
-            JOIN products AS p ON oi.order_id = p.id
+            JOIN products AS p ON oi.product_id = p.id
             GROUP BY p.id, p.name
             ORDER BY totalSold DESC
             LIMIT 5
-          `);
-          res.json(result);
-        } catch (error) {
-          console.error('Error fetching top products:', error);
-          res.status(500).json({ error: 'Server error' });
-        }
+          `, (err, result) => {
+            if (err) {
+              reject('Error fetching top products: ' + err);
+            } else {
+              resolve(result);
+            }
+          });
+        })
+        .then((result) => {
+          res.json(result); // Send the top products data to the frontend
+        })
+        .catch((error) => {
+          console.error(error);
+          res.status(500).json({ error: 'Server error' }); // Return a 500 error if there's an issue
+        });
       });
+      
 
       app.get('/api/dashboard/orders-status', async (req, res) => {
         try {
@@ -347,18 +413,46 @@ app.put('/api/products/:id/deactivate', (req, res) => {
         
       app.get('/api/dashboard/sales-trend', async (req, res) => {
         try {
-          const result = await db.query(`
-            SELECT DATE(order_date) AS date, SUM(total_amount) AS dailySales
-            FROM orders
-            WHERE status = "completed"
-            GROUP BY DATE(order_date)
-            ORDER BY date ASC
-          `);
+          const result = await new Promise((resolve, reject) => {
+            db.query(`
+              SELECT DATE(order_date) AS date, SUM(total_amount) AS dailySales
+              FROM orders
+              WHERE status = "completed"
+              GROUP BY DATE(order_date)
+              ORDER BY date ASC
+            `, (error, results) => {
+              if (error) reject(error);
+              else resolve(results);
+            });
+          });
+          
+          // If the query returns results, send them as a response
           res.json(result);
         } catch (error) {
           console.error('Error fetching sales trend:', error);
           res.status(500).json({ error: 'Server error' });
         }
+      });
+      
+
+      app.get('/api/total-customers', (req, res) => {
+        new Promise((resolve, reject) => {
+          db.query('SELECT COUNT(*) AS totalCustomers FROM users WHERE role = "user"', (err, result) => {
+            if (err) {
+              console.error('Error fetching total customers:', err);
+              reject(err);
+            } else {
+              const totalCustomers = result && result[0] && result[0].totalCustomers ? result[0].totalCustomers : 0;
+              resolve(totalCustomers);
+            }
+          });
+        })
+        .then((totalCustomers) => {
+          res.json({ totalCustomers });
+        })
+        .catch((error) => {
+          res.status(500).json({ error: 'Error fetching total customers' });
+        });
       });
       
       

@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link, useNavigate } from 'react-router-dom';
+import logo from '../images/logo.png'
 import './AdminNavbar.css';
 
 const AdminNavbar = () => {
@@ -10,7 +11,9 @@ const AdminNavbar = () => {
   return (
     <div className='adminNavbar'>
       <div className='adminNavbar-left'>
-        <p>Triple J's</p>
+        <div  className='navbar-image-container'>
+          <img src={logo} alt="" />
+        </div>
       </div>
       <div className='adminNavbar-right'>
         <Link to="/admin-dashboard">Dashboard</Link>

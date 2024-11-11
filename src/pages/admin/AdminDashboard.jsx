@@ -1,73 +1,231 @@
 import React from 'react';
-import { Box, CssBaseline, AppBar, Toolbar, Typography, Drawer, List, ListItem, ListItemText, Card, CardContent, Grid, Grid2 } from '@mui/material';
+import { Users, ChartLine, ClockClockwise, CheckCircle } from 'phosphor-react';
+import { useEffect, useState } from 'react';
+import moment from 'moment';  // Import moment.js
+import './adminDashboard.css';
+import { v4 as uuidv4 } from 'uuid';
 
 const drawerWidth = 240;
 
 const AdminDashboard = () => {
 
+  const [totalSales, setTotalSales] = useState(0);
+  const [totalOrders, setTotalOrders] = useState(0);
+  const [pendingOrders, setPendingOrders] = useState(0);
+  const [topProducts, setTopProducts] = useState([]);
+  const [totalProducts, setTotalProducts] = useState([]);
+  const [ordersByStatus, setOrdersByStatus] = useState({});
+  const [salesTrend, setSalesTrend] = useState([]);
+  const [totalCustomers, setTotalCustomers] = useState(0);
+
+  
+  const fetchTotalSales = () => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await fetch('http://localhost:8081/api/total-sales');
+        const data = await response.json();
+        resolve(data.totalSales || 0);
+      } catch (error) {
+        console.error("Error fetching total sales:", error);
+        reject(error);
+      }
+    });
+  };
+  
+  const fetchTotalProducts = () => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await fetch('http://localhost:8081/api/total-products');
+        const data = await response.json();
+        resolve(data.totalProducts || 0);
+      } catch (error) {
+        console.error("Error fetching total products:", error);
+        reject(error);
+      }
+    });
+  };
+  
+
+  const fetchTotalOrders = () => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await fetch('http://localhost:8081/api/total-orders');
+        const data = await response.json();
+        resolve(data.totalOrders || 0);
+      } catch (error) {
+        console.error("Error fetching total orders:", error);
+        reject(error);
+      }
+    });
+  };
+
+  const fetchPendingOrders = () => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await fetch('http://localhost:8081/api/total-orders-pending');
+        const data = await response.json();
+        resolve(data.totalOrders || 0);
+      } catch (error) {
+        console.error("Error fetching total orders:", error);
+        reject(error);
+      }
+    });
+  };
+
+  const fetchTopProducts = () => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await fetch('http://localhost:8081/api/top-products');
+        const data = await response.json();
+        resolve(data || []); // Resolve with an empty array in case of no data
+      } catch (error) {
+        console.error("Error fetching top products:", error);
+        reject(error);
+      }
+    });
+  };
+
+  const fetchTotalCustomers = () => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await fetch('http://localhost:8081/api/total-customers');
+        const data = await response.json();
+        resolve(data.totalCustomers || 0);
+      } catch (error) {
+        console.error("Error fetching total customers:", error);
+        reject(error);
+      }
+    });
+  };
+
+  const fetchSalesTrend = () => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await fetch('http://localhost:8081/api/dashboard/sales-trend');
+        const data = await response.json();
+        resolve(data || []); // Resolve with the data (or an empty array if there's no data)
+      } catch (error) {
+        console.error("Error fetching sales trend:", error);
+        reject(error);
+      }
+    });
+  };
+
+  useEffect(() => {
+    fetchTotalSales().then(setTotalSales).catch(console.error);
+    fetchTotalOrders().then(setTotalOrders).catch(console.error);
+    fetchPendingOrders().then(setPendingOrders).catch(console.error);
+    fetchTotalProducts().then(setTotalProducts).catch(console.error);
+    fetchTopProducts().then((data) => {
+      setTopProducts(data); // Set top products in the state
+    }).catch(console.error);
+    fetchTotalCustomers().then(setTotalCustomers).catch(console.error);
+    fetchSalesTrend().then((data) => {
+      // Format the date using moment before setting it in the state
+      const formattedData = data.map(item => ({
+        ...item,
+        date: moment(item.date).format('YYYY-MM-DD')  // Format the date
+      }));
+      setSalesTrend(formattedData);  // Set the formatted sales trend
+    }).catch(console.error);
+  }, []);
+
+  console.log(`Active Products: ${totalProducts}`);
+  console.log(`Sales Trend: ${salesTrend}`);
+  salesTrend.map((item) => {
+    console.log(item);
+  })
+ 
+
   return (
-    <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
+    
+    <div className="admin-dashboard">
+    <header className="admin-header">
+      <h1>Admin Dashboard</h1>
+    </header>
+    <div className='data-flex'>
+      <div className='data-container'>
+        <div className="data-title">
+          <p className='data-name'>Users</p> 
+          <Users size={35} />
+        </div>
+        <p className='data'>{totalCustomers}</p>
+      </div>
+      <div className='data-container'>
+        <div className="data-title">
+          <p className='data-name'>Total Sales</p>
+          <ChartLine size={35} />  
+        </div>
+        <p className='data'>₱{totalSales}</p>
+      </div>
+      <div className='data-container'>
+        <div className="data-title">
+          <p className='data-name'>Pending Orders</p>
+          <ClockClockwise size={35} />
+        </div>
+        <p className='data'>{pendingOrders}</p>
+      </div>
+      <div className='data-container'>
+        <div className="data-title">
+          <p className='data-name'>Completed Orders</p>
+          <CheckCircle size={35} />
+        </div>
+        <p className='data'>{totalOrders}</p>
+      </div>
+    </div>
 
-      {/* AppBar */}
-      <AppBar position="fixed" sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}>
-        <Toolbar>
-          <Typography variant="h6" noWrap component="div">
-            Admin Dashboard
-          </Typography>
-        </Toolbar>
-      </AppBar>
+    <div className='topProducts-table-container'>
+      <h3>Top Products</h3>
+      <table className='fl-table'>
+        <thead>
+          <tr>
+            <th>Product Name</th>
+            <th>Items Sold</th>
+            <th>Revenue</th>
+          </tr>
+        </thead>
+        <tbody>
+          {topProducts.map((product) => (
+            <tr key={uuidv4()}>
+              <td>{product.name}</td>
+              <td>{product.totalSold}</td>
+              <td>${product.revenue}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
 
-      {/* Sidebar */}
-      <Drawer
-        variant="permanent"
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
-        }}
-      >
-        <Toolbar />
-        <Box sx={{ overflow: 'auto' }}>
-          <List>
-            {['Dashboard', 'Manage Products', 'Orders', 'Users'].map((text, index) => (
-              <ListItem button key={text}>
-                <ListItemText primary={text} />
-              </ListItem>
-            ))}
-          </List>
-        </Box>
-      </Drawer>
+    <div className='topProducts-table-container'>
+      <h3>Sales Trend</h3>
+      <table className='fl-table'>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Daily Sales</th>
+          </tr>
+        </thead>
+        <tbody>
+          {salesTrend.map((item) => (
+            <tr key={uuidv4()}>
+              <td>{item.date}</td>
+              <td>${item.dailySales}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
 
-      {/* Main Content */}
-      <Box
-        component="main"
-        sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}
-      >
-        <Toolbar />
+    {/* <h2>Sales Trend</h2>
+    <ul>
+      {salesTrend.map((item, index) => (
+        <li key={Math.random()}>
+          Date: {item.date}, Daily Sales: {item.dailySales}
+        </li>
+      ))}
+    </ul> */}
 
-        {/* Dashboard Metrics */}
-        <Grid2 container spacing={3}>
-          <Grid2 item xs={12} sm={6} md={3}>
-            <Card>
-              <CardContent>
-                <Typography variant="h5">Total Sales</Typography>
-                <Typography variant="h6">$5000</Typography>
-              </CardContent>
-            </Card>
-          </Grid2>
-          <Grid2 item xs={12} sm={6} md={3}>
-            <Card>
-              <CardContent>
-                <Typography variant="h5">Products</Typography>
-                <Typography variant="h6">150</Typography>
-              </CardContent>
-            </Card>
-          </Grid2>
-          {/* Add more cards for metrics like Orders, Users, etc. */}
-        </Grid2>
-      </Box>
-    </Box>
+  </div>
   );
 };
 
