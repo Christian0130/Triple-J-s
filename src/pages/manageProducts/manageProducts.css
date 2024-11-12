@@ -33,34 +33,24 @@ flex-direction: column;
 
 .addProduct-form button{
     width: 100%;
-    height: 40px;
-    align-items: center;
-    appearance: none;
-    background-color: #FCFCFD;
-    border-radius: 4px;
-    border-width: 0;
-    box-shadow: rgba(45, 35, 66, 0.4) 0 2px 4px,rgba(45, 35, 66, 0.3) 0 7px 13px -3px,#D6D6E7 0 -3px 0 inset;
+    background: #e63946;
+    border-radius: 999px;
+    box-shadow: #e63946 0 10px 20px -10px;
     box-sizing: border-box;
-    color: black;
+    color: #FFFFFF;
     cursor: pointer;
-    display: inline-flex;
-    font-family: "JetBrains Mono",monospace;
-    justify-content: center;
-    line-height: 1;
-    list-style: none;
-    overflow: hidden;
-    padding-left: 16px;
-    padding-right: 16px;
-    position: relative;
-    text-align: left;
-    text-decoration: none;
-    transition: box-shadow .15s,transform .15s;
+    font-family: Inter,Helvetica,"Apple Color Emoji","Segoe UI Emoji",NotoColorEmoji,"Noto Color Emoji","Segoe UI Symbol","Android Emoji",EmojiSymbols,-apple-system,system-ui,"Segoe UI",Roboto,"Helvetica Neue","Noto Sans",sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 24px;
+    opacity: 1;
+    outline: 0 solid transparent;
+    padding: 8px 18px;
     user-select: none;
     -webkit-user-select: none;
     touch-action: manipulation;
-    white-space: nowrap;
-    will-change: box-shadow,transform;
-    font-size: 14px;
+    word-break: break-word;
+    border: 0;
 }
 
 .form-container h2{
@@ -100,35 +90,25 @@ flex-direction: column;
 }
 
 .open-modal-button{
-    width: 20%;
-    height: 40px;
-    align-items: center;
-    appearance: none;
-    background-color: #FCFCFD;
-    border-radius: 4px;
-    border-width: 0;
-    box-shadow: rgba(45, 35, 66, 0.4) 0 2px 4px,rgba(45, 35, 66, 0.3) 0 7px 13px -3px,#D6D6E7 0 -3px 0 inset;
+    background: #324960;
+    border-radius: 999px;
+    box-shadow: #324960 0 10px 20px -10px;
     box-sizing: border-box;
-    color: black;
+    color: #FFFFFF;
     cursor: pointer;
-    display: inline-flex;
-    font-family: "JetBrains Mono",monospace;
-    justify-content: center;
-    line-height: 1;
-    list-style: none;
-    overflow: hidden;
-    padding-left: 16px;
-    padding-right: 16px;
-    position: relative;
-    text-align: left;
-    text-decoration: none;
-    transition: box-shadow .15s,transform .15s;
+    font-family: Inter,Helvetica,"Apple Color Emoji","Segoe UI Emoji",NotoColorEmoji,"Noto Color Emoji","Segoe UI Symbol","Android Emoji",EmojiSymbols,-apple-system,system-ui,"Segoe UI",Roboto,"Helvetica Neue","Noto Sans",sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 24px;
+    opacity: 1;
+    outline: 0 solid transparent;
+    padding: 8px 18px;
     user-select: none;
     -webkit-user-select: none;
     touch-action: manipulation;
-    white-space: nowrap;
-    will-change: box-shadow,transform;
-    font-size: 14px;
+    width: fit-content;
+    word-break: break-word;
+    border: 0;
 }
 
 .open-modal-button-container{

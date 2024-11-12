@@ -60,8 +60,8 @@ const Orders = () => {
 
     return (
       <div>
-        <div className='orders-top'>
-          <h1>Orders</h1>
+        <h1 className='orders-manager'>Orders</h1>
+        <div className='radio-inputs-container'>
           <div className="radio-inputs">
               <label className="radio">
                   <input type="radio" name="radio"/>

@@ -75,8 +75,8 @@ const ManageProducts = () => {
 
   return (
     <div>
-      <h2 className='product-manager'>Product Manager</h2>
-
+      <h1 className='product-manager'>Product Manager</h1>
+      
       <div className='open-modal-button-container'>
               {/* Button to open modal */}
         <button onClick={() => setIsModalOpen(true)} className="open-modal-button">

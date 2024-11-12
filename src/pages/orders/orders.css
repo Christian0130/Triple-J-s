@@ -1,13 +1,17 @@
+.orders-manager{
+    margin-top: 100px;
+    margin-left: 60px;
+}
+
 .order-item p:nth-child(3){
     border-bottom: 1px solid black;
 }
 
-.orders-top{
-    align-items: center;
-    justify-content: space-between;
-    margin: 0px 60px;
+.radio-inputs-container{
     display: flex;
-    margin-top: 100px;
+    justify-content: end;
+    margin-right: 60px;
+    margin-bottom: 10px;
 }
 
 .radio-inputs {
