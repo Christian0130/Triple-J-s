@@ -21,32 +21,33 @@ const Orders = () => {
 
   const handleCompleteOrder = async (orderId) => {
     try {
-      const response = await fetch(`http://localhost:8081/api/orders/${orderId}/complete`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      
-      if (response.ok) {
-        alert("Order marked as completed!");
-  
-        // Update the local state for orders to reflect the status change
-        setOrders(prevOrders =>
-          prevOrders.map(order =>
-            order.order_id === orderId ? { ...order, status: 'completed' } : order
-          )
-        );
-  
-        handleCloseModal(); // Close the modal if needed
-      } else {
-        alert("Failed to update order status");
-      }
+        const response = await fetch(`http://localhost:8081/api/orders/${orderId}/complete`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (response.ok) {
+            alert("Order marked as completed! Product quantities have been updated.");
+
+            // Update the local state for orders to reflect the status change
+            setOrders(prevOrders =>
+                prevOrders.map(order =>
+                    order.order_id === orderId ? { ...order, status: 'completed' } : order
+                )
+            );
+
+            handleCloseModal(); // Close the modal if needed
+        } else {
+            alert("Failed to complete the order.");
+        }
     } catch (error) {
-      console.error("Error completing order:", error);
-      alert("There was an error. Please try again.");
+        console.error("Error completing order:", error);
+        alert("There was an error. Please try again.");
     }
-  };
+};
+
 
     // Function to open modal with selected order's items
     const handleViewItems = (order) => {
@@ -98,7 +99,7 @@ const Orders = () => {
                 <td>{new Date(order.order_date).toLocaleString()}</td>
                 <td>{order.status}</td>
                 <td>₱{order.total_amount.toFixed(2)}</td>
-                <td><button onClick={() => handleViewItems(order)}>View Items</button></td>
+                <td><button className='viewItemsbutton' onClick={() => handleViewItems(order)}>View Items</button></td>
               </tr>  
             ))}
           </tbody>
@@ -118,7 +119,7 @@ const Orders = () => {
                 </div>
               );
             })}
-            <button onClick={() => handleCompleteOrder(selectedOrder.order_id)}  
+            <button className='completeOrderButton' onClick={() => handleCompleteOrder(selectedOrder.order_id)}  
             disabled={selectedOrder.status === 'completed'}
             style={{
               cursor: selectedOrder.status === 'completed' ? 'not-allowed' : 'pointer',

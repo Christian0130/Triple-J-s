@@ -3,6 +3,7 @@ import { Users, ChartLine, ClockClockwise, CheckCircle } from 'phosphor-react';
 import { useEffect, useState } from 'react';
 import moment from 'moment';  // Import moment.js
 import './adminDashboard.css';
+import SalesTrendChart from './SalesTrendChart';
 import { v4 as uuidv4 } from 'uuid';
 
 const drawerWidth = 240;
@@ -145,13 +146,42 @@ const AdminDashboard = () => {
     </header>
     <div className='data-flex'>
       <div className='data-container'>
+        <div className='data-icon'>
+          <Users size={50} />
+        </div>
         <div className="data-title">
           <p className='data-name'>Users</p> 
-          <Users size={35} />
+          <p className='data'>{totalCustomers}</p>
         </div>
-        <p className='data'>{totalCustomers}</p>
       </div>
       <div className='data-container'>
+        <div className='data-icon'>
+        <ChartLine size={50} /> 
+        </div>
+        <div className="data-title">
+          <p className='data-name'>Total Sales</p> 
+          <p className='data'>₱{totalSales}</p>
+        </div>
+      </div>
+      <div className='data-container'>
+        <div className='data-icon'>
+        <ClockClockwise size={50} />
+        </div>
+        <div className="data-title">
+          <p className='data-name'>Pending Orders</p> 
+          <p className='data'>{pendingOrders}</p>
+        </div>
+      </div>
+      <div className='data-container'>
+        <div className='data-icon'>
+        <CheckCircle size={50} />
+        </div>
+        <div className="data-title">
+          <p className='data-name'>Completed Orders</p> 
+          <p className='data'>{totalOrders}</p>
+        </div>
+      </div>
+      {/* <div className='data-container'>
         <div className="data-title">
           <p className='data-name'>Total Sales</p>
           <ChartLine size={35} />  
@@ -171,7 +201,7 @@ const AdminDashboard = () => {
           <CheckCircle size={35} />
         </div>
         <p className='data'>{totalOrders}</p>
-      </div>
+      </div> */}
     </div>
 
     <div className='topProducts-table-container'>
@@ -197,23 +227,7 @@ const AdminDashboard = () => {
     </div>
 
     <div className='topProducts-table-container'>
-      <h3>Sales Trend</h3>
-      <table className='fl-table'>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Daily Sales</th>
-          </tr>
-        </thead>
-        <tbody>
-          {salesTrend.map((item) => (
-            <tr key={uuidv4()}>
-              <td>{item.date}</td>
-              <td>${item.dailySales}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <SalesTrendChart salesTrend={salesTrend} />
     </div>
 
     {/* <h2>Sales Trend</h2>

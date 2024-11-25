@@ -33,11 +33,11 @@ flex-direction: column;
 
 .addProduct-form button{
     width: 100%;
-    background: #e63946;
+    background: #324960;
     border-radius: 999px;
-    box-shadow: #e63946 0 10px 20px -10px;
+    box-shadow: rgb(36, 35, 42) 0 10px 20px -10px;
     box-sizing: border-box;
-    color: #FFFFFF;
+    color: #FFFFFF ;
     cursor: pointer;
     font-family: Inter,Helvetica,"Apple Color Emoji","Segoe UI Emoji",NotoColorEmoji,"Noto Color Emoji","Segoe UI Symbol","Android Emoji",EmojiSymbols,-apple-system,system-ui,"Segoe UI",Roboto,"Helvetica Neue","Noto Sans",sans-serif;
     font-size: 16px;
@@ -115,4 +115,32 @@ flex-direction: column;
     display: flex;
     justify-content: end;
     margin: 8px 60px;
+}
+
+.editProductButton{
+    color: #324960;
+    background: white;
+    border-radius: 999px;
+    box-shadow: #324960 0 10px 20px -10px;
+    box-sizing: border-box;
+    cursor: pointer;
+    font-family: Inter,Helvetica,"Apple Color Emoji","Segoe UI Emoji",NotoColorEmoji,"Noto Color Emoji","Segoe UI Symbol","Android Emoji",EmojiSymbols,-apple-system,system-ui,"Segoe UI",Roboto,"Helvetica Neue","Noto Sans",sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 24px;
+    opacity: 1;
+    outline: 0 solid transparent;
+    padding: 5px 30px;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    width: fit-content;
+    word-break: break-word;
+    border: 1px solid #324960;
+    transition: background-color, 0.3s;
+}
+
+.editProductButton:hover{
+    color: white;
+    background-color: #324960;
 }

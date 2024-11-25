@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom'; // Import useNavigate
+import "./register.css"
+import logo from '../../images/logo.png'
 
 const Registration = () => {
     const [username, setUsername] = useState('');
@@ -40,50 +42,56 @@ const Registration = () => {
 
     return (
         <>
-        <div className="registration">
-            <h2>Register</h2>
-            <form onSubmit={handleRegister}>
-                <div>
-                    <label>Username:</label>
-                    <input
-                        type="text"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        required
-                    />
-                </div>
-                <div>
-                    <label>Password:</label>
-                    <input
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
-                </div>                <div>
-                    <label>Full Name:</label>
-                    <input
-                        type="text"
-                        value={fullname}
-                        onChange={(e) => setFullname(e.target.value)}
-                        required
-                    />
-                </div>
-                <div>
-                    <label>Delivery Address:</label>
-                    <input
-                        type="text"
-                        value={address}
-                        onChange={(e) => setAddress(e.target.value)}
-                        required
-                    />
-                </div>
-                <button type="submit">Register</button>
-            </form>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            {success && <p style={{ color: 'green' }}>{success}</p>}
+        <div className='registrationPage'>
+            <div className='registration-image-container'>
+                <img src={logo} alt="" />
+            </div>
+            <div className="registration">
+                <h1>Register</h1>
+                <form onSubmit={handleRegister}>
+                    <div>
+                        <input
+                            placeholder='Username'
+                            type="text"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div>
+                        <input
+                        placeholder='Password'
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+                    </div>               
+                     <div>
+                        <input
+                        placeholder='Full Name'
+                            type="text"
+                            value={fullname}
+                            onChange={(e) => setFullname(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div>
+                        <input
+                            placeholder='Delivery Address'
+                            type="text"
+                            value={address}
+                            onChange={(e) => setAddress(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <button type="submit">Register</button>
+                </form>
+                {error && <p style={{ color: 'red' }}>{error}</p>}
+                {success && <p style={{ color: 'green' }}>{success}</p>}
+                <Link className='link' to={'/login'}>Login</Link>
+            </div>
         </div>
-        <Link to={'/login'}>Login</Link>
         </>
     );
 };

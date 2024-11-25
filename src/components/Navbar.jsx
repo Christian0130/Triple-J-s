@@ -43,7 +43,9 @@ const Navbar = () => {
     <div className='navbar'>
       <div className='adminNavbar-left'>
         <div  className='navbar-image-container'>
+          <Link to={"/"}>
           <img src={logo} alt="" />
+          </Link>
         </div>
       </div>
         <div className="right-side-links">

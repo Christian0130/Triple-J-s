@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { ShopContext } from '../../context/shop-context'; // Import your context
 import './login.css';
+import logo from '../../images/logo.png'
 
 const Login = () => {
     const [username, setUsername] = useState('');
@@ -77,30 +78,35 @@ const Login = () => {
 
     return (
         <>
-        <div className='loginContainer'>
-            <h1>Login to your Account</h1>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            {success && <p style={{ color: 'green' }}>{success}</p>}
-            <form onSubmit={handleLogin}>
-                <input
-                    placeholder='Username'
-                    type="text"
-                    id="username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    required
-                />
-                <input
-                    placeholder='Password'
-                    type="password"
-                    id="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                />
-                <button type="submit">Login</button>
-            </form>
-            <Link to={'/register'} className='link'>Register</Link>
+        <div className='loginPage'>
+            <div className='login-image-container'>
+                <img src={logo} alt="" />
+            </div>
+            <div className='loginContainer'>
+                <h1>Login to your Account</h1>
+                {error && <p style={{ color: 'red' }}>{error}</p>}
+                {success && <p style={{ color: 'green' }}>{success}</p>}
+                <form onSubmit={handleLogin}>
+                    <input
+                        placeholder='Username'
+                        type="text"
+                        id="username"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        required
+                    />
+                    <input
+                        placeholder='Password'
+                        type="password"
+                        id="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                    />
+                    <button type="submit">Login</button>
+                </form>
+                <Link to={'/register'} className='link'>Register</Link>
+            </div>
         </div>
         </>
     );

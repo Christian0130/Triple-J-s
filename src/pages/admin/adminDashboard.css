@@ -3,58 +3,94 @@
 }
 
 .data-flex{
+    margin-top: 50px;
+    margin-bottom: 40px;
     width: 100%;
-    height: 155px;
+    height: 145px;
     display: flex;
     justify-content: space-between;
 }
 
-.data-flex .data-container:nth-child(1){
-    background-color: #e9edc9;
+.data-container{
+    display: flex;
+    justify-content: end;
+    position: relative;
+    width: 20%;
+    padding: 10px 20px;
+    border-radius: 5px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 
-.data-flex .data-container:nth-child(2){
-    background-color: #8ecae6;
+/* .data-flex .data-icon:nth-child(1){
+    background-color: green;
 }
 
-.data-flex .data-container:nth-child(3){
+.data-flex .data-icon:nth-child(2){
     background-color: #ffd166;
 }
 
-.data-flex .data-container:nth-child(4){
-    background-color: #06d6a0;
-
+.data-container .data-icon:nth-child(3){
+    background-color: #8ecae6;
 }
 
-.data-container{
-    width: 20%;
-    background-color: lightgreen;
-    padding: 10px 20px;
-    border-radius: 15px;
+.data-container .data-icon:nth-child(4){
+    background-color: #06d6a0;
+} */
+
+.data-container:nth-child(1) .data-icon {
+    background-color: #ef476f; /* Color for the first icon (Users) */
+  }
+  
+  .data-container:nth-child(2) .data-icon {
+    background-color: #ffd166; /* Color for the second icon (Total Sales) */
+  }
+  
+  .data-container:nth-child(3) .data-icon {
+    background-color: #06d6a0; /* Color for the third icon (Pending Orders) */
+  }
+  
+  .data-container:nth-child(4) .data-icon {
+    background-color: #118ab2; /* Color for the fourth icon (Completed Orders) */
+  }
+
+.data-icon{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    border-radius: 5px;
+    top: -20px;
+    left: 10px;
+    width: 28%;
+    height: 60%;
 }
 
 .data-title{
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    align-items: end;
+    margin-right: 10px; 
+    height: 100%;
 }
 
 .data-title p{
+    margin: 0;
     font-size: 20px;
     font-weight: 600;
 }
 
-.data{
-    text-align: center;
+.data-title p:nth-child(1){
+    font-size: 18px;
+}
+
+.data-title p:nth-child(2){
     font-size: 35px;
-    font-weight: 600;
-    margin: 0;
 }
 
 .topProducts-table-container{
     margin-top: 20px;
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-    padding: 10px 5px;
+    padding: 10px 5px 40px 5px;
     border-radius: 5px;
     margin-bottom: 20px;
 }
@@ -62,3 +98,4 @@
 .topProducts-table-container h3{
     border-bottom: 1px solid gray;
 }
+

@@ -10,22 +10,24 @@ const ManageProducts = () => {
     image: '',
     quantity: ''
   });
+  const [currentProduct, setCurrentProduct] = useState(null); // For editing product
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal visibility state
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false); // Modal for editing
+
   // Fetch all products
   useEffect(() => {
     const fetchProducts = async () => {
-        try {
-            const response = await fetch('http://localhost:8081/api/admin/products');
-            const data = await response.json();
-            setProducts(data); // Set both active and inactive products
-        } catch (error) {
-            console.error('Error fetching products:', error);
-        }
+      try {
+        const response = await fetch('http://localhost:8081/api/admin/products');
+        const data = await response.json();
+        setProducts(data);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
     };
 
     fetchProducts();
-}, []);
-
+  }, []);
 
   // Add new product
   const addProduct = async (e) => {
@@ -38,47 +40,53 @@ const ManageProducts = () => {
       });
       if (response.ok) {
         const updatedProducts = await response.json();
-         // Generate a temporary id if the backend doesn't provide one
-        updatedProducts.id = updatedProducts.id || Date.now(); // Or use Math.random()
+        updatedProducts.id = updatedProducts.id || Date.now(); // Temporary ID
         setProducts([...products, updatedProducts]);
         setNewProduct({ name: '', price: '', image: '', quantity: '' });
-        window.alert("Product Added Successfully")
+        setIsModalOpen(false); // Close the modal
+        window.alert("Product Added Successfully");
       }
     } catch (err) {
       console.error("Error adding product:", err);
     }
   };
 
-  //Change the product Status
-  const toggleProductStatus = async (id, currentStatus) => {
+  // Open the edit modal
+  const openEditModal = (product) => {
+    setCurrentProduct(product);
+    setIsEditModalOpen(true);
+  };
+
+  // Handle editing the product
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
     try {
-      const newStatus = currentStatus === 1 ? 0 : 1; // Toggle the status (1 = Active, 0 = Inactive)
-      const response = await fetch(`http://localhost:8081/api/products/${id}/status`, {
+      const response = await fetch(`http://localhost:8081/api/products/${currentProduct.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: newStatus }),
+        body: JSON.stringify(currentProduct),
       });
-  
+
       if (response.ok) {
-        // Update the product's status in the local state
-        setProducts(
-          products.map((product) =>
-            product.id === id ? { ...product, status: newStatus } : product
+        setProducts((prevProducts) =>
+          prevProducts.map((product) =>
+            product.id === currentProduct.id ? currentProduct : product
           )
         );
+        setIsEditModalOpen(false); // Close the modal
+        window.alert('Product updated successfully');
       }
     } catch (err) {
-      console.error("Error toggling product status:", err);
+      console.error('Error updating product:', err);
     }
   };
-  
 
   return (
     <div>
-      <h1 className='product-manager'>Product Manager</h1>
-      
-      <div className='open-modal-button-container'>
-              {/* Button to open modal */}
+      <h1 className="product-manager">Product Manager</h1>
+
+      <div className="open-modal-button-container">
+        {/* Button to open "Add Product" modal */}
         <button onClick={() => setIsModalOpen(true)} className="open-modal-button">
           Add New Product
         </button>
@@ -87,9 +95,9 @@ const ManageProducts = () => {
       {/* Modal for adding a new product */}
       {isModalOpen && (
         <Modal onClose={() => setIsModalOpen(false)}>
-          <div className='form-container'>
+          <div className="form-container">
             <h2>Add New Product</h2>
-            <form onSubmit={addProduct} className='addProduct-form'>
+            <form onSubmit={addProduct} className="addProduct-form">
               <input
                 type="text"
                 placeholder="Name"
@@ -119,15 +127,15 @@ const ManageProducts = () => {
           </div>
         </Modal>
       )}
-    
 
-      <div className='table-container'>
-        <table className='fl-table'>
+      {/* Table displaying products */}
+      <div className="table-container">
+        <table className="fl-table">
           <thead>
             <tr>
               <th>Name</th>
               <th>Price</th>
-              <th>quantity</th>
+              <th>Quantity</th>
               <th>Status</th>
               <th>Action</th>
             </tr>
@@ -138,11 +146,13 @@ const ManageProducts = () => {
                 <td>{product.name}</td>
                 <td>{product.price}</td>
                 <td>{product.quantity}</td>
-                <td>{product.status === 1 ? "Active" : "Inactive"}</td>
+                <td>{product.status === 1 ? 'Active' : 'Inactive'}</td>
                 <td>
-                  {/* Add a button to toggle the product status */}
-                  <button onClick={() => toggleProductStatus(product.id, product.status)}>
-                    {product.status === 1 ? "Deactivate" : "Activate"}
+                  <button
+                    className="editProductButton"
+                    onClick={() => openEditModal(product)}
+                  >
+                    Edit
                   </button>
                 </td>
               </tr>
@@ -150,6 +160,51 @@ const ManageProducts = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Modal for editing the product */}
+      {isEditModalOpen && currentProduct && (
+        <Modal onClose={() => setIsEditModalOpen(false)}>
+          <div className="edit-product-form-container">
+            <h2>Edit Product</h2>
+            <form onSubmit={handleEditSubmit} className="editProduct-form">
+              <input
+                type="text"
+                placeholder="Name"
+                value={currentProduct.name}
+                onChange={(e) =>
+                  setCurrentProduct({ ...currentProduct, name: e.target.value })
+                }
+              />
+              <input
+                type="number"
+                placeholder="Price"
+                value={currentProduct.price}
+                onChange={(e) =>
+                  setCurrentProduct({ ...currentProduct, price: e.target.value })
+                }
+              />
+              <input
+                type="number"
+                placeholder="Quantity"
+                value={currentProduct.quantity}
+                onChange={(e) =>
+                  setCurrentProduct({ ...currentProduct, quantity: e.target.value })
+                }
+              />
+              <select
+                value={currentProduct.status}
+                onChange={(e) =>
+                  setCurrentProduct({ ...currentProduct, status: Number(e.target.value) })
+                }
+              >
+                <option value={1}>Active</option>
+                <option value={0}>Inactive</option>
+              </select>
+              <button type="submit">Save Changes</button>
+            </form>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 };

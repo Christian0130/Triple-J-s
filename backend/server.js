@@ -217,19 +217,55 @@ app.get('/api/admin/orders', (req, res) => {
     });
 });
 
-//change pending to completed
-app.put('/api/orders/:orderId/complete', (req, res) => {
-    const orderId = req.params.orderId;
+app.put('/api/orders/:orderId/complete', async (req, res) => {
+  const { orderId } = req.params;
 
-    const updateOrderQuery = 'UPDATE orders SET status = ? WHERE order_id = ?';
-    db.query(updateOrderQuery, ['completed', orderId], (err, result) => {
-        if (err) {
-            console.error("Error updating order status:", err);
-            return res.status(500).json({ message: "Failed to update order status" });
-        }
-        res.status(200).json({ message: "Order status updated successfully" });
-    });
+  try {
+      // Fetch the order items to get product IDs and quantities
+      const orderItems = await new Promise((resolve, reject) => {
+          db.query(
+              'SELECT product_id, quantity FROM order_items WHERE order_id = ?',
+              [orderId],
+              (error, results) => {
+                  if (error) reject(error);
+                  else resolve(results);
+              }
+          );
+      });
+
+      // Reduce the quantity for each product
+      for (const item of orderItems) {
+          await new Promise((resolve, reject) => {
+              db.query(
+                  'UPDATE products SET quantity = quantity - ? WHERE id = ?',
+                  [item.quantity, item.product_id],
+                  (error, results) => {
+                      if (error) reject(error);
+                      else resolve(results);
+                  }
+              );
+          });
+      }
+
+      // Mark the order as completed
+      await new Promise((resolve, reject) => {
+          db.query(
+              'UPDATE orders SET status = "completed" WHERE order_id = ?',
+              [orderId],
+              (error, results) => {
+                  if (error) reject(error);
+                  else resolve(results);
+              }
+          );
+      });
+
+      res.json({ message: 'Order marked as completed, and product quantities updated.' });
+  } catch (error) {
+      console.error('Error completing order:', error);
+      res.status(500).json({ error: 'Error completing order.' });
+  }
 });
+
 
 app.put('/api/products/:id/deactivate', (req, res) => {
     const productId = req.params.id;
@@ -455,4 +491,18 @@ app.put('/api/products/:id/deactivate', (req, res) => {
         });
       });
       
+      app.put('/api/products/:id', async (req, res) => {
+        const { id } = req.params;
+        const { name, price, quantity, status } = req.body;
+      
+        try {
+          await db.query('UPDATE products SET name = ?, price = ?, quantity = ?, status = ? WHERE id = ?', [
+            name, price, quantity, status, id,
+          ]);
+          res.json({ message: 'Product updated successfully' });
+        } catch (error) {
+          console.error('Error updating product:', error);
+          res.status(500).json({ error: 'Server error' });
+        }
+      });
       
