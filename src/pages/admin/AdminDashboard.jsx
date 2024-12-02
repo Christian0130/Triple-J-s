@@ -219,7 +219,7 @@ const AdminDashboard = () => {
             <tr key={uuidv4()}>
               <td>{product.name}</td>
               <td>{product.totalSold}</td>
-              <td>${product.revenue}</td>
+              <td>₱{product.revenue}</td>
             </tr>
           ))}
         </tbody>

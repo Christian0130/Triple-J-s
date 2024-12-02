@@ -15,7 +15,7 @@
 .adminNavbar a{
     text-decoration: none;
     color: black;
-    font-size: 18px;
+    font-size: 17px;
 }
 
 .adminNavbar a:hover{
@@ -33,7 +33,7 @@
 .adminNavbar-right{
     display: flex;
     justify-content: space-between;
-    
+    align-items: center;
     width: 40%;
 }
 

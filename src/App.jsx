@@ -10,6 +10,7 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminNavbar from './components/AdminNavbar';
 import Orders from './pages/orders/Orders';
 import ManageProducts from './pages/manageProducts/ManageProducts';
+import Account from './pages/account/Account';
 
 function App() {
   const location = useLocation(); // Access the current route
@@ -44,6 +45,7 @@ function App() {
           <Route path="/orders" element={<Orders />} />
           <Route path="/manage-products" element={<ManageProducts />} />
           <Route path="/admin-dashboard" element={<AdminDashboard />} />
+          <Route path="/account" element={<Account />} />
           {/* Add a NotFound route if needed */}
         </Routes>
       </ShopContextProvider>

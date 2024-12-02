@@ -49,6 +49,7 @@ const Navbar = () => {
         </div>
       </div>
         <div className="right-side-links">
+          <Link to={"/account"}>My Account</Link>
           <Link to={"/cart"}>
           <ShoppingCart size={32}/>
           </Link>

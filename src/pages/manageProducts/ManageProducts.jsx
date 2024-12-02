@@ -144,7 +144,7 @@ const ManageProducts = () => {
             {products.map((product) => (
               <tr key={product.id}>
                 <td>{product.name}</td>
-                <td>{product.price}</td>
+                <td>₱{product.price}</td>
                 <td>{product.quantity}</td>
                 <td>{product.status === 1 ? 'Active' : 'Inactive'}</td>
                 <td>
