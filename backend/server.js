@@ -197,18 +197,20 @@ app.post('/api/place-order/:userId', (req, res) => {
 //orders endpoint
 app.get('/api/admin/orders', (req, res) => {
     const getOrdersQuery = `
-        SELECT 
-            orders.order_id, 
-            orders.user_id, 
-            orders.order_date, 
-            orders.status, 
-            orders.total_amount,
-            users.name as user_name,
-            GROUP_CONCAT(CONCAT(order_items.product_id, ':', order_items.quantity, ':', order_items.price)) as items
-        FROM orders
-        JOIN order_items ON orders.order_id = order_items.order_id
-        JOIN users ON orders.user_id = users.userId
-        GROUP BY orders.order_id;
+SELECT 
+    orders.order_id, 
+    orders.user_id, 
+    orders.order_date, 
+    orders.status, 
+    orders.total_amount,
+    users.name AS user_name,
+    GROUP_CONCAT(CONCAT(order_items.product_id, ':', order_items.quantity, ':', order_items.price, ':', products.name)) AS items
+FROM orders
+LEFT JOIN order_items ON orders.order_id = order_items.order_id
+LEFT JOIN products ON order_items.product_id = products.id
+JOIN users ON orders.user_id = users.userId
+GROUP BY orders.order_id;
+
     `;
 
     db.query(getOrdersQuery, (err, results) => {

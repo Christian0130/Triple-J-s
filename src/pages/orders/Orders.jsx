@@ -110,10 +110,14 @@ const Orders = () => {
           <Modal onClose={handleCloseModal}>
             <h4>Items:</h4>
             {selectedOrder.items.split(',').map((item) => {
-              const [productId, quantity, price] = item.split(':');
+              const [productId, quantity, price, productName] = item.split(':');
+              console.log("Items field:", selectedOrder.items);
+              console.log("Split items:", selectedOrder.items.split(','));
+
               return (
                 <div key={productId} className="order-item">
                   <p>Product ID: {productId}</p>
+                  <p>Product Name: {productName}</p>
                   <p>Quantity: {quantity}</p>
                   <p>Price per item: ₱{parseFloat(price).toFixed(2)}</p>
                 </div>
