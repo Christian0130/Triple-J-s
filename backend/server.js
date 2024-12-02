@@ -142,11 +142,11 @@ app.post('/login', (req, res) => {
 // });
 
 app.post('/register', async (req, res) => {
-    const { username, password, fullname, address } = req.body;
+    const { username, password, fullname, address, email } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10); // Hash the password
 
-    const sql = "INSERT INTO users (username, password, name, userAddress) VALUES (?, ?, ?, ?)";
-    db.query(sql, [username, hashedPassword, fullname, address], (err, result) => {
+    const sql = "INSERT INTO users (username, password, name, userAddress, email) VALUES (?, ?, ?, ?, ?)";
+    db.query(sql, [username, hashedPassword, fullname, address, email], (err, result) => {
         if (err) return res.json(err);
         return res.json("User registered successfully");
     });

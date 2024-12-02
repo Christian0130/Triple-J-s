@@ -8,6 +8,7 @@ const Registration = () => {
     const [password, setPassword] = useState('');
     const [fullname, setFullname] = useState('');
     const [address, setAddress] = useState('');
+    const [email, setEmail] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
@@ -22,7 +23,7 @@ const Registration = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ username, password, fullname, address }),
+                body: JSON.stringify({ username, password, fullname, address, email }),
             });
 
             if (!response.ok) {
@@ -35,6 +36,7 @@ const Registration = () => {
             setPassword('');
             setFullname('');
             setAddress('');
+            setEmail('');
         } catch (err) {
             setError(err.message);
         }
@@ -82,6 +84,15 @@ const Registration = () => {
                             type="text"
                             value={address}
                             onChange={(e) => setAddress(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div>
+                        <input
+                            placeholder='Email Address'
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             required
                         />
                     </div>
