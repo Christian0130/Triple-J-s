@@ -3,6 +3,7 @@ const mysql = require('mysql');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
 
 
 const app = express()
@@ -15,6 +16,15 @@ const db = mysql.createConnection({
     password: '',
     database: 'triple_js'
 })
+
+// Configure the transporter
+const transporter = nodemailer.createTransport({
+  service: 'gmail', // or use a specific SMTP server
+  auth: {
+    user: 'xtianxd0130@gmail.com', // Replace with your email
+    pass: 'ibdyfbgxoilpjmsf' // Use an app password if using Gmail
+  }
+});
 
 app.get('/', (req, res) => {
     return res.json("From Backend Side")
@@ -223,48 +233,98 @@ app.put('/api/orders/:orderId/complete', async (req, res) => {
   const { orderId } = req.params;
 
   try {
-      // Fetch the order items to get product IDs and quantities
-      const orderItems = await new Promise((resolve, reject) => {
-          db.query(
-              'SELECT product_id, quantity FROM order_items WHERE order_id = ?',
-              [orderId],
-              (error, results) => {
-                  if (error) reject(error);
-                  else resolve(results);
-              }
-          );
-      });
+    // Fetch the order details, including user email
+    const orderDetails = await new Promise((resolve, reject) => {
+      db.query(
+        `SELECT o.user_id, u.email, o.order_date 
+         FROM orders o 
+         JOIN users u ON o.user_id = u.userId 
+         WHERE o.order_id = ?`,
+        [orderId],
+        (error, results) => {
+          if (error) reject(error);
+          else resolve(results[0]); // Assuming one result
+        }
+      );
+    });
 
-      // Reduce the quantity for each product
-      for (const item of orderItems) {
-          await new Promise((resolve, reject) => {
-              db.query(
-                  'UPDATE products SET quantity = quantity - ? WHERE id = ?',
-                  [item.quantity, item.product_id],
-                  (error, results) => {
-                      if (error) reject(error);
-                      else resolve(results);
-                  }
-              );
-          });
-      }
+    if (!orderDetails) {
+      return res.status(404).json({ error: 'Order not found.' });
+    }
 
-      // Mark the order as completed
+    // Fetch the order items to get product details
+    const orderItems = await new Promise((resolve, reject) => {
+      db.query(
+        `SELECT p.name, oi.quantity 
+         FROM order_items oi 
+         JOIN products p ON oi.product_id = p.id 
+         WHERE oi.order_id = ?`,
+        [orderId],
+        (error, results) => {
+          if (error) reject(error);
+          else resolve(results);
+        }
+      );
+    });
+
+    // Reduce the quantity for each product
+    for (const item of orderItems) {
       await new Promise((resolve, reject) => {
-          db.query(
-              'UPDATE orders SET status = "completed" WHERE order_id = ?',
-              [orderId],
-              (error, results) => {
-                  if (error) reject(error);
-                  else resolve(results);
-              }
-          );
+        db.query(
+          'UPDATE products SET quantity = quantity - ? WHERE id = ?',
+          [item.quantity, item.product_id],
+          (error) => {
+            if (error) reject(error);
+            else resolve();
+          }
+        );
       });
+    }
 
-      res.json({ message: 'Order marked as completed, and product quantities updated.' });
+    // Mark the order as completed
+    await new Promise((resolve, reject) => {
+      db.query(
+        'UPDATE orders SET status = "completed" WHERE order_id = ?',
+        [orderId],
+        (error) => {
+          if (error) reject(error);
+          else resolve();
+        }
+      );
+    });
+
+    // Format order items for email
+    const formattedOrderItems = orderItems
+      .map((item) => `${item.name}: ${item.quantity}`)
+      .join('\n');
+
+    // Send email to the user
+    const mailOptions = {
+      from: 'xtianxd0130@gmail.com',
+      to: orderDetails.email,
+      subject: 'Your Order is Completed!',
+      text: `Hello,
+
+Thank you for your order placed on ${orderDetails.order_date}. 
+
+Your order has been successfully Processed. Below are the details:
+
+${formattedOrderItems}
+
+Expect your order to be delivered within 2-3 business days.
+
+We hope to serve you again soon!
+
+Best regards,
+TripleJs`,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    res.json({ message: 'Order marked as completed, product quantities updated, and email sent.' });
   } catch (error) {
-      console.error('Error completing order:', error);
-      res.status(500).json({ error: 'Error completing order.' });
+    console.error('Error completing order:', error);
+    res.status(500).json({ error: 'Error completing order.' });
   }
 });
 
