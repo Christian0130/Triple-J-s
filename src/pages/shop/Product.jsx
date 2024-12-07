@@ -6,6 +6,7 @@ import "./shop.css";
 const Product = (props) => {
   const { addToCart } = useContext(ShopContext);
   const { id, name, price, image, quantity } = props.data;
+  const [cartMessageVisible, setCartMessageVisible] = useState(false);
 
   // Disable button if quantity exceeds available stock
   const [quantityInCart, setQuantityInCart] = useState(0);
@@ -17,6 +18,14 @@ const Product = (props) => {
     } else {
       alert(`Only ${quantity} units of ${name} are available.`);
     }
+
+     // Show the "Added to cart" message
+     setCartMessageVisible(true);
+
+     // Hide the message after 2 seconds
+     setTimeout(() => {
+       setCartMessageVisible(false);
+     }, 2000);
   };
 
   return (
@@ -29,6 +38,7 @@ const Product = (props) => {
           <p>{name}</p>
         </div>
         <p>₱{price}</p>
+        <div className={`added-to-cart ${cartMessageVisible ? 'visible' : ''}`}>Added</div>
         <div className="addToCartBttn" onClick={handleAddToCart} disabled={quantityInCart >= quantity}>
           Add to Cart
         </div>

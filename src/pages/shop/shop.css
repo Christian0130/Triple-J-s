@@ -103,7 +103,7 @@ html{
     font-size: 25px;
     font-weight: 600;
     color: rgb(20, 125, 20);
-    margin: 0 0 15px 0;
+    margin: 0 0 0px 0;
   }
   
   
@@ -142,3 +142,18 @@ html{
     text-overflow: ellipsis;
   }
 
+.added-to-cart{
+  color: rgb(6, 125, 98);
+  font-size: 16px;
+  font-weight: 500;
+  margin-top: 0;
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.added-to-cart.visible{
+  opacity: 1;
+}

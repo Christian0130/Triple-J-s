@@ -1,0 +1,19 @@
+.editAccount-form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.editAccount-form input{
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.editAccount-form button{
+    width: 100%;
+}
+
+.load-data{
+    margin-top: 100px;
+}

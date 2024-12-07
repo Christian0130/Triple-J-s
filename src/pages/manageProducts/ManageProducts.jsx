@@ -8,7 +8,8 @@ const ManageProducts = () => {
     name: '',
     price: '',
     image: '',
-    quantity: ''
+    quantity: '',
+    description: ''
   });
   const [currentProduct, setCurrentProduct] = useState(null); // For editing product
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal visibility state
@@ -42,7 +43,7 @@ const ManageProducts = () => {
         const updatedProducts = await response.json();
         updatedProducts.id = updatedProducts.id || Date.now(); // Temporary ID
         setProducts([...products, updatedProducts]);
-        setNewProduct({ name: '', price: '', image: '', quantity: '' });
+        setNewProduct({ name: '', price: '', image: '', quantity: '', description: '' });
         setIsModalOpen(false); // Close the modal
         window.alert("Product Added Successfully");
       }
@@ -105,6 +106,12 @@ const ManageProducts = () => {
                 onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
               />
               <input
+                type="text"
+                placeholder="Description"
+                value={newProduct.description}
+                onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
+              />              
+              <input
                 type="number"
                 placeholder="Price"
                 value={newProduct.price}
@@ -145,7 +152,7 @@ const ManageProducts = () => {
               <tr key={product.id}>
                 <td>{product.name}</td>
                 <td>₱{product.price}</td>
-                <td>{product.quantity}</td>
+                <td>{product.quantity} lbs</td>
                 <td>{product.status === 1 ? 'Active' : 'Inactive'}</td>
                 <td>
                   <button
@@ -175,6 +182,14 @@ const ManageProducts = () => {
                   setCurrentProduct({ ...currentProduct, name: e.target.value })
                 }
               />
+              <input
+                type="text"
+                placeholder="Description"
+                value={currentProduct.description}
+                onChange={(e) =>
+                  setCurrentProduct({ ...currentProduct, description: e.target.value })
+                }
+              /> 
               <input
                 type="number"
                 placeholder="Price"

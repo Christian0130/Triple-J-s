@@ -359,21 +359,21 @@ app.put('/api/products/:id/deactivate', (req, res) => {
 
 
   app.post('/api/add-product', (req, res) => {
-    const { name, price, image, quantity } = req.body;
+    const { name, description, price, image, quantity } = req.body;
 
     // Validate required fields
-    if (!name || price === undefined || quantity === undefined) {
-        return res.status(400).json({ error: "name, price, image, and quantity are required" });
+    if (!name || price === undefined || quantity === undefined || description === undefined ) {
+        return res.status(400).json({ error: "name, description, price, image, and quantity are required" });
     }
 
     // SQL query to insert a new product
     const insertProductQuery = `
-        INSERT INTO products (name, price, image, quantity)
-        VALUES (?, ?, ?, ?)
+        INSERT INTO products (name, price, image, quantity, description)
+        VALUES (?, ?, ?, ?, ?)
     `;
 
     // Execute the query
-    db.query(insertProductQuery, [name, price, image, quantity], (err, result) => {
+    db.query(insertProductQuery, [name, price, image, quantity, description], (err, result) => {
         if (err) {
             console.error("Error inserting product:", err);
             return res.status(500).json({ error: "Failed to add product" });
@@ -555,11 +555,11 @@ app.put('/api/products/:id/deactivate', (req, res) => {
       
       app.put('/api/products/:id', async (req, res) => {
         const { id } = req.params;
-        const { name, price, quantity, status } = req.body;
+        const { name, price, quantity, status, description } = req.body;
       
         try {
-          await db.query('UPDATE products SET name = ?, price = ?, quantity = ?, status = ? WHERE id = ?', [
-            name, price, quantity, status, id,
+          await db.query('UPDATE products SET name = ?, price = ?, quantity = ?, status = ?, description = ? WHERE id = ?', [
+            name, price, quantity, status, description, id,
           ]);
           res.json({ message: 'Product updated successfully' });
         } catch (error) {
@@ -568,3 +568,38 @@ app.put('/api/products/:id/deactivate', (req, res) => {
         }
       });
       
+      app.get('/api/users/:userId', (req, res) => {
+        const { userId } = req.params;
+    
+        db.query(
+            'SELECT username, email, userAddress, name FROM users WHERE userId = ?',
+            [userId],
+            (error, results) => {
+                if (error) {
+                    console.error('Error fetching user data:', error);
+                    return res.status(500).json({ error: 'Failed to fetch user data' });
+                }
+                if (results.length === 0) {
+                    return res.status(404).json({ error: 'User not found' });
+                }
+                res.status(200).json(results[0]); // Send user data as JSON
+            }
+        );
+    });
+    
+    app.put('/api/users/:userId', (req, res) => {
+      const { userId } = req.params;
+      const { name, userAddress, email, username } = req.body;
+  
+      db.query(
+          'UPDATE users SET name = ?, userAddress = ?, email = ?, username = ? WHERE userId = ?',
+          [name, userAddress, email, username, userId],
+          (error, results) => {
+              if (error) {
+                  console.error('Error updating user data:', error);
+                  return res.status(500).json({ error: 'Failed to update user data' });
+              }
+              res.status(200).json({ message: 'User data updated successfully.' });
+          }
+      );
+  });
