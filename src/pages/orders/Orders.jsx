@@ -19,6 +19,36 @@ const Orders = () => {
     fetchOrders();
   }, []);
 
+  const fetchOrders = async () => {
+    try {
+      const response = await fetch('http://localhost:8081/api/admin/orders'); // Adjust the URL based on your backend setup
+      const data = await response.json();
+      setOrders(data);
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+    }
+  };
+
+  const fetchPendingOrders = async () => {
+    try {
+      const response = await fetch('http://localhost:8081/api/admin/orders/pending'); // Adjust the URL based on your backend setup
+      const data = await response.json();
+      setOrders(data);
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+    }
+  };
+
+  const fetchCompletedOrders = async () => {
+    try {
+      const response = await fetch('http://localhost:8081/api/admin/orders/completed'); // Adjust the URL based on your backend setup
+      const data = await response.json();
+      setOrders(data);
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+    }
+  };
+
   const handleCompleteOrder = async (orderId) => {
     try {
         const response = await fetch(`http://localhost:8081/api/orders/${orderId}/complete`, {
@@ -48,6 +78,26 @@ const Orders = () => {
     }
 };
 
+const createWalkInOrder = async (customerName, selectedProducts) => {
+  try {
+      const response = await fetch('http://localhost:8081/api/walk-in-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ customerName, products: selectedProducts })
+      });
+
+      if (response.ok) {
+          const data = await response.json();
+          console.log('Order created successfully:', data);
+          // Update orders page to reflect the new order
+      } else {
+          console.error('Failed to create order:', await response.json());
+      }
+  } catch (error) {
+      console.error('Error creating walk-in order:', error);
+  }
+};
+
 
     // Function to open modal with selected order's items
     const handleViewItems = (order) => {
@@ -64,21 +114,12 @@ const Orders = () => {
         <h1 className='orders-manager'>Orders</h1>
         <div className='radio-inputs-container'>
           <div className="radio-inputs">
-              <label className="radio">
-                  <input type="radio" name="radio"/>
-                  <span className="name">Default</span>
-                </label>
-                <label className="radio">
-                  <input type="radio" name="radio"/>
-                  <span className="name">Pending</span>
-                </label>
-                    
-                <label className="radio">
-                  <input type="radio" name="radio"/>
-                  <span className="name">Completed</span>
-                </label>
+            <button onClick={() => fetchOrders()}>Default</button>
+            <button onClick={() => fetchPendingOrders()}>pending</button>
+            <button onClick={() => fetchCompletedOrders()}>Completed</button>
           </div>
         </div>
+        
         <div className='table-container'>
         <table className='fl-table'>
           <thead>

@@ -1,5 +1,6 @@
 import React, { useContext, useState} from 'react'
 import { ShopContext } from '../../context/shop-context';
+import { Link } from 'react-router-dom';
 import "./shop.css";
 
 
@@ -30,6 +31,7 @@ const Product = (props) => {
 
   return (
     <div className='product'>
+       <Link to={`/product/${id}`} className="product-link">
       <div className="product-image-container">
         <img src={image} alt="" />
       </div>
@@ -38,11 +40,8 @@ const Product = (props) => {
           <p>{name}</p>
         </div>
         <p>₱{price}</p>
-        <div className={`added-to-cart ${cartMessageVisible ? 'visible' : ''}`}>Added</div>
-        <div className="addToCartBttn" onClick={handleAddToCart} disabled={quantityInCart >= quantity}>
-          Add to Cart
-        </div>
       </div>
+      </Link>
     </div>
   );
 };

@@ -3,6 +3,8 @@ html{
   scroll-padding: 4rem;
 }
 
+
+
 .shopTitle {
   position: absolute;
   bottom: 80px;
@@ -83,6 +85,11 @@ html{
     display: flex;
     flex-direction: column;
   }
+
+  .product a{
+    text-decoration: none;
+    color: #000000;
+  }
   
   .product-image-container {
     display: flex;
@@ -156,4 +163,49 @@ html{
 
 .added-to-cart.visible{
   opacity: 1;
+}
+
+.product-info{
+  padding: 0 40px;
+  margin-top: 50px;
+  height: 600px;
+  display: flex;
+  flex-direction: row;
+}
+
+.productinfo-img-container{
+  height: 80%;
+  margin-right: 30px;
+}
+
+.productinfo-img-container img{
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.product-info-container{
+  margin-top: 100px;
+}
+
+.product-information{
+  height: 80px;
+  margin: 70px 70px 0 70px;
+  text-align: center;
+  font-size: 40px;
+  border-bottom: 1px solid black;
+}
+
+.productinfo-description input{
+  border-radius: 20px;
+  border: 1px solid rgb(154, 152, 152);
+  width: 18%;
+  padding-left: 10px;
+  height: 30px;
+}
+
+.productinfo-description p:nth-child(3){
+  font-size: 17px;
+  font-weight: 600;
+  color: rgb(20, 125, 20);
 }

@@ -11,6 +11,7 @@ import AdminNavbar from './components/AdminNavbar';
 import Orders from './pages/orders/Orders';
 import ManageProducts from './pages/manageProducts/ManageProducts';
 import Account from './pages/account/Account';
+import ProductInfo from './pages/shop/ProductInfo';
 
 function App() {
   const location = useLocation(); // Access the current route
@@ -43,6 +44,7 @@ function App() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/login" element={<Login />} /> 
           <Route path="/orders" element={<Orders />} />
+          <Route path="/product/:id" element={<ProductInfo />} />
           <Route path="/manage-products" element={<ManageProducts />} />
           <Route path="/admin-dashboard" element={<AdminDashboard />} />
           <Route path="/account" element={<Account />} />

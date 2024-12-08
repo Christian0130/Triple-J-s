@@ -55,43 +55,45 @@ export const ShopContextProvider = (props) => {
     //     });
     // };
 
-    const addToCart = (product) => {
-        const userId = localStorage.getItem('userId'); // Get the user ID from localStorage
-        if (!userId) {
-            console.error('User not logged in');
-            navigate('/login');
-            window.alert("Please Log in")
-            return;
+    const addToCart = (product, quantity) => {
+      const userId = localStorage.getItem('userId'); // Get the user ID from localStorage
+      if (!userId) {
+        console.error('User not logged in');
+        navigate('/login');
+        window.alert("Please Log in");
+        return;
+      }
+    
+      setCartItems((prevCart) => {
+        // Find if the product is already in the cart
+        const existingItem = prevCart.find((item) => item.id === product.id);
+    
+        // Check if the product quantity to add is valid
+        if (quantity > product.quantity) {
+          alert(`Only ${product.quantity} units of ${product.name} are available.`);
+          return prevCart;  // Return the previous cart, no update if quantity exceeds available stock
         }
-        setCartItems((prevCart) => {
-          // Find if the product is already in the cart
-          const existingItem = prevCart.find((item) => item.id === product.id);
-      
-          if (existingItem) {
-            const newQuantity = existingItem.quantity + 1;
-      
-            // Prevent adding more products than available
-            if (newQuantity > product.quantity) {
-              alert(`Only ${product.quantity} units of ${product.name} are available.`);
-              return prevCart;  // Return the previous cart, no update if quantity exceeds
-            }
-      
-            // Update cart quantity
-            return prevCart.map((item) =>
-              item.id === product.id ? { ...item, quantity: newQuantity } : item
-            );
+    
+        if (existingItem) {
+          const newQuantity = existingItem.quantity + quantity; // Add the user-inputted quantity to the existing quantity
+    
+          // Prevent adding more products than available
+          if (newQuantity > product.quantity) {
+            alert(`Only ${product.quantity} units of ${product.name} are available.`);
+            return prevCart;  // Return previous cart, no update if quantity exceeds
           }
-      
-          // Check if the product is in stock before adding to cart
-          if (product.quantity < 1) {
-            alert(`Sorry, ${product.name} is out of stock.`);
-            return prevCart;
-          }
-      
-          // If not in the cart, add the product with quantity 1
-          return [...prevCart, { ...product, quantity: 1 }];
-        });
-      };
+    
+          // Update cart quantity
+          return prevCart.map((item) =>
+            item.id === product.id ? { ...item, quantity: newQuantity } : item
+          );
+        }
+    
+        // If not in the cart, add the product with the user-specified quantity
+        return [...prevCart, { ...product, quantity }];
+      });
+    };
+    
       
 
     const saveCartToDatabase = async (userId) => {

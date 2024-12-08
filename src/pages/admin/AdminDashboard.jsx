@@ -18,6 +18,8 @@ const AdminDashboard = () => {
   const [ordersByStatus, setOrdersByStatus] = useState({});
   const [salesTrend, setSalesTrend] = useState([]);
   const [totalCustomers, setTotalCustomers] = useState(0);
+  const [selectedDate, setSelectedDate] = useState('');
+  const [salesData, setSalesData] = useState([]);
 
   
   const fetchTotalSales = () => {
@@ -112,6 +114,37 @@ const AdminDashboard = () => {
     });
   };
 
+    // Function to fetch sales data based on the selected date
+    const fetchSalesData = async (date) => {
+      if (!date) {
+        console.error('Date is required to fetch sales data.');
+        setSalesData([]); // Clear previous data
+        return;
+      }
+    
+      try {
+        const response = await fetch(`http://localhost:8081/api/sales-by-date?date=${date}`);
+        if (!response.ok) {
+          throw new Error(`Error ${response.status}: ${response.statusText}`);
+        }
+        const data = await response.json();
+        setSalesData(data);
+      } catch (err) {
+        console.error('Error fetching sales data:', err);
+        setSalesData([]); // Handle errors by clearing data
+      }
+    };
+
+
+      // Handle date change
+  const handleDateChange = (event) => {
+    const date = event.target.value;
+    setSelectedDate(date);
+    if (date) {
+      fetchSalesData(date); // Fetch sales data for the selected date
+    }
+  };
+
   useEffect(() => {
     fetchTotalSales().then(setTotalSales).catch(console.error);
     fetchTotalOrders().then(setTotalOrders).catch(console.error);
@@ -131,11 +164,12 @@ const AdminDashboard = () => {
     }).catch(console.error);
   }, []);
 
-  console.log(`Active Products: ${totalProducts}`);
-  console.log(`Sales Trend: ${salesTrend}`);
-  salesTrend.map((item) => {
-    console.log(item);
-  })
+  useEffect(() => {
+    // Fetch all sales data on initial load or if no date is selected
+    if (!selectedDate) {
+      fetchSalesData('');
+    }
+  }, [selectedDate]);
  
 
   return (
@@ -227,6 +261,42 @@ const AdminDashboard = () => {
     </div>
 
     <div className='topProducts-table-container'>
+    <div className="date-search">
+        <label htmlFor="date-picker">Search Sales by Date:</label>
+        <input
+          type="date"
+          id="date-picker"
+          value={selectedDate}
+          onChange={handleDateChange}
+        />
+      </div>
+      <div className="sales-data">
+        <h2>Sales Data</h2>
+        {salesData.length === 0 ? (
+          <p>No sales data found for the selected date.</p>
+        ) : (
+          <table>
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Total Amount</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {salesData.map((sale) => (
+                <tr key={sale.order_id}>
+                  <td>{sale.order_id}</td>
+                  <td>{sale.customer_name}</td>
+                  <td>${sale.total_amount.toFixed(2)}</td>
+                  <td>{sale.order_date}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
     <SalesTrendChart salesTrend={salesTrend} />
     </div>
 

@@ -229,6 +229,56 @@ GROUP BY orders.order_id;
     });
 });
 
+app.get('/api/admin/orders/pending', (req, res) => {
+  const getOrdersQuery = `
+SELECT 
+    orders.order_id, 
+    orders.user_id, 
+    orders.order_date, 
+    orders.status, 
+    orders.total_amount,
+    users.name AS user_name,
+    GROUP_CONCAT(CONCAT(order_items.product_id, ':', order_items.quantity, ':', order_items.price, ':', products.name)) AS items
+FROM orders
+LEFT JOIN order_items ON orders.order_id = order_items.order_id
+LEFT JOIN products ON order_items.product_id = products.id
+JOIN users ON orders.user_id = users.userId
+WHERE orders.status = 'pending'
+GROUP BY orders.order_id;
+
+  `;
+
+  db.query(getOrdersQuery, (err, results) => {
+      if (err) return res.status(500).json("Error retrieving orders");
+      res.status(200).json(results);
+  });
+});
+
+app.get('/api/admin/orders/completed', (req, res) => {
+  const getOrdersQuery = `
+SELECT 
+    orders.order_id, 
+    orders.user_id, 
+    orders.order_date, 
+    orders.status, 
+    orders.total_amount,
+    users.name AS user_name,
+    GROUP_CONCAT(CONCAT(order_items.product_id, ':', order_items.quantity, ':', order_items.price, ':', products.name)) AS items
+FROM orders
+LEFT JOIN order_items ON orders.order_id = order_items.order_id
+LEFT JOIN products ON order_items.product_id = products.id
+JOIN users ON orders.user_id = users.userId
+WHERE orders.status = 'completed'
+GROUP BY orders.order_id;
+
+  `;
+
+  db.query(getOrdersQuery, (err, results) => {
+      if (err) return res.status(500).json("Error retrieving orders");
+      res.status(200).json(results);
+  });
+});
+
 app.put('/api/orders/:orderId/complete', async (req, res) => {
   const { orderId } = req.params;
 
@@ -603,3 +653,107 @@ app.put('/api/products/:id/deactivate', (req, res) => {
           }
       );
   });
+
+  app.get('/api/products/:id', async (req, res) => {
+    const { id } = req.params;
+
+    db.query('SELECT * FROM products WHERE id = ?', 
+      [id], 
+      (error, results) => {
+        if (error) {
+            console.error('Error fetching user data:', error);
+            return res.status(500).json({ error: 'Failed to fetch user data' });
+        }
+        if (results.length === 0) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        res.status(200).json(results[0]); // Send user data as JSON
+    }
+    )
+  });
+
+  // Endpoint to get sales data by date
+  app.get('/api/sales-by-date', async (req, res) => {
+    const { date } = req.query; // Corrected to use req.query
+
+    if (!date) {
+        return res.status(400).json({ error: 'Date query parameter is required' });
+    }
+
+    const query = `
+      SELECT 
+        orders.order_id, 
+        orders.user_id, 
+        orders.order_date, 
+        orders.status, 
+        orders.total_amount,
+        users.name AS customer_name,
+        GROUP_CONCAT(CONCAT(order_items.product_id, ':', order_items.quantity, ':', order_items.price, ':', products.name)) AS items
+      FROM orders
+      LEFT JOIN order_items ON orders.order_id = order_items.order_id
+      LEFT JOIN products ON order_items.product_id = products.id
+      JOIN users ON orders.user_id = users.userId
+      WHERE DATE(orders.order_date) = ?
+      GROUP BY orders.order_id;
+    `;
+
+    db.query(query, [date], (error, results) => {
+        if (error) {
+            console.error('Error fetching sales data:', error);
+            return res.status(500).json({ error: 'Failed to fetch sales data' });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({ error: 'No sales data found for the given date' });
+        }
+
+        res.status(200).json(results); // Send all matching results as JSON
+    });
+});
+
+app.post('/api/walk-in-order', async (req, res) => {
+  const { customerName, products } = req.body; // Expecting customerName and a list of products
+  const orderDate = new Date(); // Current date
+  const status = 'completed'; // Default status for walk-in orders
+
+  if (!customerName || !products || products.length === 0) {
+      return res.status(400).json({ error: 'Customer name and products are required' });
+  }
+
+  db.beginTransaction(async (err) => {
+      if (err) {
+          return res.status(500).json({ error: 'Transaction error' });
+      }
+
+      try {
+          // Insert into orders table
+          const [orderResult] = await db.query(`
+              INSERT INTO orders (user_id, order_date, status, total_amount)
+              VALUES (NULL, ?, ?, ?)
+          `, [orderDate, status, calculateTotal(products)]);
+
+          const orderId = orderResult.insertId;
+
+          // Insert products into order_items table
+          for (const product of products) {
+              await db.query(`
+                  INSERT INTO order_items (order_id, product_id, quantity, price)
+                  VALUES (?, ?, ?, ?)
+              `, [orderId, product.productId, product.quantity, product.price]);
+          }
+
+          db.commit();
+          res.status(201).json({ message: 'Walk-in order created successfully', orderId });
+
+      } catch (error) {
+          db.rollback();
+          console.error('Error creating walk-in order:', error);
+          res.status(500).json({ error: 'Failed to create walk-in order' });
+      }
+  });
+});
+
+// Helper function to calculate total
+function calculateTotal(products) {
+  return products.reduce((total, product) => total + (product.quantity * product.price), 0);
+}
